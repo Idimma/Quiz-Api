@@ -1,0 +1,218 @@
+body {
+    font-family: Arial;
+    font-size: 20px;
+    line-height: .8cm;
+}
+
+#question-view {
+    font-family: "Century Schoolbook";
+    text-align: center;
+    vertical-align: middle;
+    font-size: 40px;
+    font-style: normal;
+}
+
+#dialogoverlay {
+    display: none;
+    opacity: .8;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    background: #FFF;
+    width: 100%;
+    z-index: 10;
+}
+
+#dialogbox {
+    display: none;
+    position: fixed;
+    background: silver;
+    text-align: center;
+    border-radius: 7px;
+    width: 350px;
+    z-index: 10;
+}
+
+#editable {
+    border-style: groove;
+    padding: 20px;
+
+}
+
+#dialogbox > div {
+    background: transparent;
+    margin: 8px;
+}
+
+.head > span {
+    margin-right: 180px;
+}
+
+.head {
+    margin-top: 20px;
+    margin-bottom: 30px;
+    font-family: sans-serif;
+    display: inline-block;
+}
+
+.body_header {
+    margin-top: 20px;
+    margin-bottom: 30px;
+
+}
+
+#span_gh {
+    font-size: 20px;
+}
+
+.bodily {
+    background-image: url("/images/NYSC-LOGO.png");
+    background-color: #147119;
+
+}
+
+#dialogbox > div > #dialogboxhead {
+    background: #a6a6a6;
+    font-size: 19px;
+    padding: 10px;
+    color: red;
+}
+
+#dialogbox > div > #dialogboxbody {
+    background: silver;
+    padding: 20px;
+    color: black;
+}
+
+#dialogbox > div > #dialogboxfoot {
+    background: #a6a6a6;
+    padding: 10px;
+    text-align: right;
+}
+
+.btn-nav {
+    margin-bottom: 20px;
+}
+
+.choices {
+    padding: 7px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+
+}
+
+.options {
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.opt {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    margin-left: 100px;
+}
+
+.dashboard {
+    width: 90%;
+    margin: auto;
+    padding: 7px;
+    border-radius: 5px;
+    border: 1px #ccc solid;
+    position: relative;
+}
+
+.quest {
+    width: 90%;
+    margin: auto;
+    padding: 7px;
+    border-radius: 5px;
+    border: 1px #ccc solid;
+    position: relative;
+}
+
+.dashboard > div {
+    float: left;
+    width: 50%;
+}
+
+.dashboard > h2 {
+    text-align: center;
+}
+
+.dashboard:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.collect {
+    width: 100%;
+    height: 300px;
+    top: 50%;
+    left: 0;
+
+    position: relative;
+}
+
+.con {
+    text-align: center;
+    margin-top: 150px;
+}
+
+.collect > div {
+    position: absolute;
+    top: 50%;
+    text-align: center;
+    -ms-transform: translate(0%, -50%);
+    transform: translate(0%, -50%);
+    width: 100%;
+
+}
+
+footer {
+    text-align: center;
+    margin-top: 10px;
+    width: 90%;
+    padding-top: 5px;
+}
+
+input[type="text"] {
+    width: 50%;
+    padding: 7px;
+    border-radius: 5px;
+    border: 1px #ccc solid;
+}
+
+input[type="number"] {
+    width: 50px;
+    padding: 7px;
+    border-radius: 5px;
+    border: 1px #ccc solid;
+
+}
+
+.bdd {
+    margin: 0 auto;
+    vertical-align: middle;
+    overflow: auto;
+}
+
+.nextbuttoncontainer {
+    position: absolute;
+    top: 530px;
+    left: 830px;
+}
+
+.backbutton, .nextbutton, .restartbutton {
+    width: 120px;
+    height: 40px;
+    border-radius: 20px;
+    color: white;
+    text-align: center;
+    background-color: #3c763d;
+    text-shadow: 0 0 1px rgba(7, 76, 146, 0.2);
+}
+
+.btn{
+    background: #004c97;
+}
