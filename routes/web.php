@@ -17,6 +17,13 @@ use TCG\Voyager\Facades\Voyager;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::post('/', function () {
+    dd(request()->all());
+});
+
+
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 });

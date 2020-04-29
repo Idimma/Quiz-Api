@@ -3,63 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="author" content="Gidicodes">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <!-- app favicon -->
+    <link rel="shortcut icon" href="{{asset('images/rccg_img.png')}}">
     <title>RCCG LP 69 Quiz Portal</title>
     <link href="{{asset('css/index.css')}}" rel="stylesheet">
     <link rel="stylesheet" href="{{asset('css/style.css')}}" type="text/css">
 </head>
-<body class="container-fluid " style="background-color: white; color: black">
+<body class="d-flex  flex-column">
 
-<div>
-    <header class="row bg-primary text-white d-flex mb-3" style="height: 60px;">
-        <img src="{{asset("images/rccg_img.png")}}">
-    </header>
+<header class="bg-primary text-center text-white mb-3 py-2 ">
+    <div class="d-flex justify-content-center align-items-center">
+        <img height="45" width="45" src="{{asset('images/rccg_img.png')}}">
+        <h1 class="ml-3 bold text-white">R.C.C.G LP 69</h1>
+    </div>
+    <p class="text-white">Web based quiz for children department</p>
+</header>
 
-    <main class="modal-content dashboard row"
-          style="width: 80%; height: auto; margin: auto;    padding: 7px;    border-radius: 5px;    border: 1px #ccc solid;
-    position: relative;">
-        <!--<div class="dashboard">-->
-        <!--<h2>Test Your Bible Knowledge</h2>-->
-        <div class="bdd col-md-6">
-            <label><p><strong>Game Structure</strong></p>
-                <ol>
-                    <li>Number of Questions:
-                        <ul>
-                            <li>Stage 1: 15</li>
-                            <li>Stage 2: 15</li>
-                            <li>Stage 3: 15</li>
-                            <li>Draw 1: 3</li>
-                            <li>Draw 2: 3</li>
-                            <li>Draw 3: 6</li>
-                        </ul>
-                    </li>
-                    <li>Question Type: Multiple choice</li>
-                    <li>Allocated Time: 60 sec/Question</li>
-                    <!--<li>Pick a Game mate</li>-->
-                    <li>If time elapses you are marked wrong</li>
-                </ol>
-            </label>
-        </div>
-        <div class="con col-md-6">
-            <div class="row">
-                <input type="text" id="school" placeholder="Team Name"/>
-            </div>
-            <div class="row">
-                <div style="margin-top: 20px" class="btn-nav text-center">
-                    <button class="nextbutton nextbuttonbackgroundsvg  " title="SUBMIT"
-                            name="startnew"
-                            id='start' value="SUBMIT" type="button">
-                        Start
-                    </button>
+<div class="pt-5">
+
+    <div class="card radius-10 ml-auto mr-auto mt-4 col-md-6">
+        <form action="{{url('/')}}" method="post">
+            @csrf
+            <div class="card-body p-lg-4 p-xs-2 p-xl-5">
+                <div class="form-group">
+                    <label for="name">Your Name <span style="font-size: 70%; font-style: italic">(Surname First)</span></label>
+                    <input id="name" name="name" class="form-control">
                 </div>
+
+                <div class="form-group pt-3">
+                    <label for="zone">Select Your Zone</label>
+                    <select id="zone" name="zone" class="form-control">
+                        @forelse(\App\Zone::get() as $zones)
+                            <option>{{$zone->name}}</option>
+                        @empty
+                            <option disabled>No Zone Added Yet..</option>
+                        @endforelse
+                    </select>
+                </div>
+                <div class="form-group pt-3">
+                    <label for="class">Select Your Age Group</label>
+                    <select id="class" name="class" class="form-control">
+                        <option>6 - 8</option>
+                        <option>9 - 12</option>
+                        <option>Teens</option>
+                    </select>
+                </div>
+                <div class="text-center pt-3">
+                    <button type="submit" class="btn-primary btn  btn-round ">Proceed</button>
+                </div>
+
             </div>
-        </div>
-        <!--</div>-->
-    </main>
+        </form>
+    </div>
 
 </div>
 
-<script type="text/javascript" src="{{asset("js/jquery-3.2.1.min.js")}}"></script>
-<script type="text/javascript" src="{{asset("js/bootstrap.js")}}"></script>
+
 </body>
 </html>
 
