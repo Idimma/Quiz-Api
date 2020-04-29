@@ -1,7 +1,45 @@
+@font-face {
+    font-family: 'Avenir Next Medium';
+    src: url("../fonts/AvenirNext-Medium.ttf");
+}
+
+@font-face {
+    font-family: 'Avenir Next Bold';
+    src: url("../fonts/AvenirNext-Bold.ttf");
+}
+
+@font-face {
+    font-family: 'Avenir Next Regular';
+    src: url("../fonts/AvenirNext-Regular.ttf");
+}
+
+@font-face {
+    font-family: 'Avenir Next Light';
+    src: url("../fonts/AvenirNext-UltraLight.ttf");
+}
+
+@font-face {
+    font-family: 'Avenir Next Italic';
+    src: url("../fonts/AvenirNext-Italic.ttf");
+}
+
+
+.m-5 {
+    margin: 5px;
+}
+.m-10 {
+    margin: 10px;
+}
+.bg-primary{
+    background: #0E1558!important;
+}
+
 body {
-    font-family: Arial;
+    font-family: "Avenir Next Regular", fantasy;
     font-size: 20px;
     line-height: .8cm;
+    /*display: flex;*/
+    width: 100%;
 }
 
 #question-view {
@@ -213,6 +251,6 @@ input[type="number"] {
     text-shadow: 0 0 1px rgba(7, 76, 146, 0.2);
 }
 
-.btn{
+.btn {
     background: #004c97;
 }
