@@ -93,3 +93,8 @@ Route::post('/spell', function () {
 
 
 
+
+
+Route::group(['prefix' => 'admin'], function () {
+    Voyager::routes();
+});
