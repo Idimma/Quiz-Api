@@ -2,136 +2,74 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>EDG Quiz</title>
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css" type="text/css">
+    <meta name="author" content="Gidicodes">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <!-- app favicon -->
+    <link rel="shortcut icon" href="{{asset('images/rccg_img.png')}}">
+    <title>RCCG LP 69 Quiz Portal</title>
+    <link href="{{asset('css/index.css')}}" rel="stylesheet">
+    <link rel="stylesheet" href="{{asset('css/style.css')}}" type="text/css">
 </head>
-<body class="container-fluid " style="background-color: #147119; color: black">
+<body class="d-flex  flex-column">
 
+<header style=" background: #0E1558 !important;" class="text-center text-white mb-3 py-2 ">
+    <div class="d-flex justify-content-center align-items-center">
+        <img height="45" width="45" src="{{asset('images/rccg_img.png')}}">
+        <h1 class="ml-3 bold text-white">R.C.C.G LP 69</h1>
+    </div>
+    <p class="text-white">Web based quiz portal for children department</p>
+</header>
 
-<div id="dialogoverlay">
-</div>
-<div id="dialogbox">
-    <div>
-        <div id="dialogboxhead">
-        </div>
-        <div>
-            <div style="display: inline-block">
-            </div>
-            <div id="dialogboxbody" align="center" style="display: inline-block" tex>
-            </div>
-        </div>
-        <div id="dialogboxfoot">
+<div class="pt-2">
+
+    <div class="card radius-10 ml-auto mr-auto mt-4 col-md-8" style="min-height: 70vh">
+        <div class="card-body p-lg-4 p-xs-2 p-xl-5">
+            <h3 class="bold">Instructions</h3>
+            <p class="mb-3">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed porttitor lectus nibh. Vestibulum ac diam
+                sit amet quam vehicula elementum sed sit amet dui. Vivamus suscipit tortor eget felis porttitor
+                volutpat. Curabitur non nulla sit amet nisl tempus convallis quis ac lectus. Donec rutrum congue leo
+                eget malesuada. Pellentesque in ipsum id orci porta dapibus. Sed porttitor lectus nibh. Donec
+                sollicitudin molestie malesuada. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices
+                posuere cubilia Curae; Donec velit neque, auctor sit amet aliquam vel, ullamcorper sit amet ligula.
+            </p>
+            <form action="{{url('quiz')}}" method="post">
+                @csrf
+                <input name="name" hidden value="{{$name ?? ''}}">
+                <input name="zone" hidden value="{{$zone ?? ''}}">
+                <input name="class" hidden value="{{$class ?? ''}}">
+                <div class="py-3">
+                    <p>Select Quiz Type</p>
+                    <select name="type" class="form-control col-5">
+                        <option>Multiple Options</option>
+                        <option>Spelling Bee</option>
+                    </select>
+
+                    <p class="pt-4">
+                        I <span class="bold text-primary">{{$name ?? ''}},</span> from
+                        <span class="underline">
+                        {{$zone ?? 'Selected Zone '}}
+                    </span> confirm that I am in the age group <span
+                                class="medium text-black-50"> {{$class ?? ''}}</span>
+                        and I have read and understood the instructions stated above
+                    </p>
+                </div>
+
+                <div class="row text-right px-5">
+
+                    <button type="submit" class="btn-primary ml-auto btn btn-round"
+                            style="width: 120px;">
+                        Start Quiz
+                    </button>
+                </div>
+            </form>
+
         </div>
     </div>
-</div>
-<div>
-    <header class="row body_header " style="color: white">
-        <div class="col-md-3 text-center">
-            <img src="{{asset('images/rccglogo.jpeg')}}" height="80px">
-        </div>
-        <div class="col-md-6 text-center">
-            <h2 style="text-align: center; ">RCCG LP 69 BILBE QUIZ</h2>
-        </div>
-        <div class="col-md-3 text-center">
-            <img src="{{asset('images/rccglogo.jpeg')}}" height="80px">
-        </div>
-
-    </header>
-    <main class="quest modal-content">
-        <div class="row">
-            <div class="col-lg-4 col-md-4 col-sm-4s">
-                <a onclick="loadQuiz('stage1')">
-                    <div class="panel panel-primary">
-                        <div class="panel-heading text-center">
-                            <img src="{{asset('images/rccglogo.jpeg')}}" height="80px">
-                        </div>
-                        <div class="panel-footer">
-                            <span>STAGE 1</span>
-                            <div class="clearfix"></div>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col-lg-4 col-md-4 col-sm-4s">
-                <a onclick="loadQuiz('stage2')">
-                    <div class="panel panel-primary">
-                        <div class="panel-heading text-center">
-                            <img src="{{asset('images/rccglogo.jpeg')}}" height="80px">
-                        </div>
-                        <div class="panel-footer">
-                            <span>STAGE 2</span>
-                            <div class="clearfix"></div>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col-lg-4 col-md-4 col-sm-4s">
-                <a onclick="loadQuiz('stage3')">
-                    <div class="panel panel-primary">
-                        <div class="panel-heading text-center">
-                            <img src="{{asset('images/rccglogo.jpeg')}}" height="80px">
-                        </div>
-                        <div class="panel-footer">
-                            <span>STAGE 3</span>
-                            <div class="clearfix"></div>
-                        </div>
-                    </div>
-                </a>
-            </div>
-        </div>
-        <div class="row">
-
-            <div class="col-lg-4 col-md-4 col-sm-4s">
-                <div class="panel panel-danger">
-                    <a onclick="loadQuiz('draw1')">
-                        <div class="panel-heading text-center" style="background-color: red">
-                            <img src="{{asset('images/rccglogo.jpeg')}}" height="80px">
-                        </div>
-                        <div class="panel-footer text-center">
-                            <span>DRAW 1</span>
-                            <div class="clearfix"></div>
-                        </div>
-                    </a>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-4 col-sm-4s">
-                <div class="panel panel-danger">
-                    <a onclick="loadQuiz('draw2')" >
-                        <div class="panel-heading text-center" style="background-color: red">
-                            <img src="{{asset('images/rccglogo.jpeg')}}" height="80px">
-                        </div>
-                        <div class="panel-footer text-center">
-                            <span>DRAW 2</span>
-                            <div class="clearfix"></div>
-                        </div>
-                    </a>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-4 col-sm-4s">
-                <div class="panel panel-danger">
-                    <a onclick="loadQuiz('draw3')">
-                        <div class="panel-heading text-center" style="background-color: red">
-                            <img src="{{asset('images/rccglogo.jpeg')}}" height="80px">
-                        </div>
-                        <div class="panel-footer text-center">
-                            <span>DRAW 3</span>
-                            <div class="clearfix"></div>
-                        </div>
-                    </a>
-                </div>
-            </div>
-
-        </div>
-    </main>
-    <div style="color: white; margin-top: 20px" class="text-center">Powered by GIDICODES Copyright &copy 2019</div>
 
 </div>
 
 
-<script type="text/javascript" src="{{asset('js/jquery-3.2.1.min.js')}}"></script>
-<script type="text/javascript" src="{{asset('js/game.js')}}"></script>
-<script type="text/javascript" src="{{asset('js/start.js')}}"></script>
-<script src="{{asset('js/bootstrap.min.js')}}"></script>
 </body>
 </html>
+

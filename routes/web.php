@@ -19,9 +19,12 @@ Route::get('/', function () {
 });
 
 Route::post('/', function () {
-    dd(request()->all());
+    return view('dashboard', request()->all());
 });
 
+Route::post('/quiz', function () {
+    return view('multiple-options', request()->all());
+});
 
 
 Route::get('/dashboard', function () {
@@ -100,9 +103,6 @@ Route::post('/spell', function () {
     }
 
 });
-
-
-
 
 
 Route::group(['prefix' => 'admin'], function () {

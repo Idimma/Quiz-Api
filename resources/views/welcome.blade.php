@@ -20,7 +20,7 @@
     <p class="text-white">Web based quiz portal for children department</p>
 </header>
 
-<div class="pt-5">
+<div class="pt-2">
 
     <div class="card radius-10 ml-auto mr-auto mt-4 col-md-6">
         <form action="{{url('/')}}" method="post">
@@ -28,12 +28,12 @@
             <div class="card-body p-lg-4 p-xs-2 p-xl-5">
                 <div class="form-group">
                     <label for="name">Your Name <span style="font-size: 70%; font-style: italic">(Surname First)</span></label>
-                    <input id="name" name="name" class="form-control">
+                    <input required id="name" name="name" class="form-control">
                 </div>
 
                 <div class="form-group pt-3">
                     <label for="zone">Select Your Zone</label>
-                    <select id="zone" name="zone" class="form-control">
+                    <select  id="zone" name="zone" class="form-control">
                         @forelse(\App\Zone::get() as $zones)
                             <option>{{$zone->name}}</option>
                         @empty
@@ -50,7 +50,7 @@
                     </select>
                 </div>
                 <div class="text-center pt-3">
-                    <button type="submit" class="btn-primary btn  btn-round ">Proceed</button>
+                    <button type="submit" style="width: 120px" class="btn-primary btn  btn-round ">Proceed</button>
                 </div>
 
             </div>
