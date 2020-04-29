@@ -99,5 +99,8 @@ Route::post('/spell', function () {
 
 
 Route::group(['prefix' => 'admin'], function () {
+    Route::get('/', function () {
+        return 'Hello World';
+    });
     Voyager::routes();
 });
