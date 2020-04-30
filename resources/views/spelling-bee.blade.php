@@ -15,16 +15,20 @@
             <div style="min-height: 80px;"
                  class="d-flex flex-column justify-content-center align-items-center  radius-5 pt-3 pb-5">
                 <label for="spell">Enter Spelling</label>
-                <input class="form-control col-md-6 ml-auto mr-auto " id="spell">
+                <input
+                        oninput="showDone(this)"
+                        autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+                        class="form-control col-md-6 ml-auto mr-auto " style="height: 50px" id="spell">
+                <p style="font-size: 60%" class="text-danger p-0">You can press enter when done</p>
             </div>
 
 
             <div class="row">
-                <button class="btn-primary ml-auto  btn btn-round " style="width: 160px;" onclick="sayWord()">
+                <button class="btn-primary ml-auto mr-auto btn btn-round " style="width: 160px;" onclick="sayWord()">
                     SAY WORD
                 </button>
-                <button class="btn-success ml-5 mr-auto btn btn-round "
-                        onclick="checkSpelling()">
+                <button id="doneButton" style="display: none" class="btn-warning ml-5 mr-auto btn bg-warning btn-round "
+                        onclick="done()">
                     DONE
                 </button>
             </div>
@@ -39,15 +43,28 @@
     </div>
 @stop
 @section('script')
-    <script src="https://code.responsivevoice.org/responsivevoice.js?key=mWhii7gw"></script>
     <script>
 
         let words = [], timeLeft = 10,
             count = 0, answers = {}, timelog = {}, time, id = '0',
             ans = '', got = 0, timeStarted = false;
-
         const spell = document.getElementById('spell');
         const timer = document.getElementById("timer");
+        const counter = document.getElementById("counter");
+        const doneButton = document.getElementById("doneButton");
+
+        function done() {
+            checkSpelling()
+        }
+
+        function showDone(input) {
+            const text = input.value;
+            if (text.length > 0) {
+                doneButton.style.display = 'block'
+            } else {
+                doneButton.style.display = 'none'
+            }
+        }
 
         function stopQuestions() {
             window.location.href =
@@ -55,12 +72,11 @@
                     JSON.stringify(timelog)}&answers=${JSON.stringify(answers)}`;
         }
 
+
         spell.addEventListener("keyup", function (event) {
-            // Number 13 is the "Enter" key on the keyboard
             if (event.keyCode === 13) {
-                // Cancel the default action, if needed
                 event.preventDefault();
-                checkSpelling();
+                done();
             }
         });
 
@@ -88,15 +104,18 @@
         function getWords() {
             fetch('{{url('api/spelling')}}').then(r => r.json()).then(res => {
                 words = res.data;
+                counter.innerHTML = `${count + 1}/${words.length}`;
             }).catch(console.log)
         }
 
         getWords();
 
         function sayWord() {
-            if (!timeStarted) {
+            if (timeLeft === 10) {
                 startTimer();
+                return pronounWord(words[count].word)
             }
+            counter.innerHTML = `${count + 1}/${words.length}`;
             pronounWord(words[count].word)
         }
 
@@ -106,16 +125,12 @@
 
         function startTimer() {
             let now = 0;
-            timeStarted = true;
-            // Update the count down every 1 second;
             time = setInterval(function () {
-                // Find the timeLeft between now and the count down date
                 now++;
                 timeLeft = timeLeft - now;
                 let minutes = Math.floor(timeLeft / 60);
                 let seconds = timeLeft - minutes * 60;
                 timer.innerHTML = formatTime(minutes) + ":" + formatTime(seconds);
-                // If the count down is finished, write some text
                 if (timeLeft < 0) {
                     checkSpelling();
                 }
@@ -124,36 +139,24 @@
 
 
         function pronounWord(word) {
-// get all voices that browser offers
-            var available_voices = window.speechSynthesis.getVoices();
+            let available_voices = window.speechSynthesis.getVoices();
+            let english_voice = available_voices[49];
 
-// this will hold an english voice
-            var english_voice = '';
-
-// find voice by language locale "en-US"
-// if not then select the first voice
             for (var i = 0; i < available_voices.length; i++) {
-                if (available_voices[i].lang === 'en-US') {
+                if (available_voices[i].lang === 'en-GB' && available_voices[i].name === "Google UK English Female") {
                     english_voice = available_voices[i];
                     break;
                 }
             }
-            if (english_voice === '')
-                english_voice = available_voices[0];
 
-// new SpeechSynthesisUtterance object
-            var utter = new SpeechSynthesisUtterance();
+            let utter = new SpeechSynthesisUtterance();
             utter.rate = 1;
             utter.pitch = 0.5;
             utter.text = `Spell ${word}`;
             utter.voice = english_voice;
-
-// event after text has been spoken
             utter.onend = function () {
                 // alert('Speech has finished');
-            }
-
-// speak
+            };
             window.speechSynthesis.speak(utter);
         }
     </script>

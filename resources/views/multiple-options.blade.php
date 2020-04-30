@@ -100,7 +100,6 @@
 
         function loadNextQuestion() {
             count++;
-
             document.querySelector('.form-check').disabled = false;
             const checked = document.querySelector('input[name="option"]:checked');
             if (checked) {
