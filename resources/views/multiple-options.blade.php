@@ -21,33 +21,37 @@
                 <input type="submit" hidden id="submit">
                 <div class="row  pl-5">
                     <div class="form-check col-md-6">
-                        <input class="form-check-input" type="radio" name="option" onchange="selectOption('a')" id="a" value="a">
+                        <input class="form-check-input" type="radio" name="option" onchange="selectOption('a')" id="a"
+                               value="a">
                         <label class="form-check-label" for="a">
                             <p id="option1"></p>
                         </label>
                     </div>
                     <div class="form-check col-md-6">
-                        <input class="form-check-input" type="radio" id="b" onchange="selectOption('b')" name="option" value="b" >
+                        <input class="form-check-input" type="radio" id="b" onchange="selectOption('b')" name="option"
+                               value="b">
                         <label class="form-check-label" for="b">
                             <p id="option2"></p>
                         </label>
                     </div>
                     <div class="form-check col-md-6">
-                        <input class="form-check-input" type="radio" onchange="selectOption('c')" id="c" name="option" value="c">
+                        <input class="form-check-input" type="radio" onchange="selectOption('c')" id="c" name="option"
+                               value="c">
                         <label class="form-check-label" for="c">
                             <p id="option3"></p>
                         </label>
                     </div>
                     <div class="form-check col-md-6">
                         <input class="form-check-input" id="d"
-                               onchange="selectOption('d')"type="radio" value="d" name="option">
+                               onchange="selectOption('d')" type="radio" value="d" name="option">
                         <label class="form-check-label" for="d">
                             <p id="option4"></p>
                         </label>
                     </div>
                     <div class="form-check col-md-6 ">
-                        <input class="form-check-input" onchange="selectOption('e')" id="e" type="radio" name="option" value="e" >
-                        <label class="form-check-label"  for="e">
+                        <input class="form-check-input" onchange="selectOption('e')" id="e" type="radio" name="option"
+                               value="e">
+                        <label class="form-check-label" for="e">
                             <p id="option5"></p>
                         </label>
                     </div>
@@ -70,17 +74,20 @@
     <script>
 
 
-        let questions = [], count = -1, answers = {}, time;
+        let questions = [], count = -1, answers = {}, time, id = '0';
         const submit = document.getElementById("submit");
+
         function stopQuestions() {
 
         }
 
         function selectOption(opt) {
             clearInterval(time);
-            answers[count] = opt;
-            document.querySelector('input[name="option"]:checked').checked = false;
-            loadNextQuestion();
+            answers[id] = opt;
+            document.querySelector('.form-check').disabled = true;
+            setTimeout(function () {
+                loadNextQuestion();
+            }, 1500);
         }
 
         function loadNextQuestion() {
@@ -88,7 +95,15 @@
             if (count > questions.length) {
                 stopQuestions();
                 return
+            }else {
+                document.querySelector('.form-check').disabled = false;
+                const checked = document.querySelector('input[name="option"]:checked');
+                if (checked) {
+                    checked.checked = false;
+                }
             }
+
+
             const questionView = document.getElementById("question");
             const counter = document.getElementById("counter");
             const opt1 = document.getElementById("option1");
@@ -104,6 +119,7 @@
             opt3.innerHTML = quiz.c;
             opt4.innerHTML = quiz.d;
             opt5.innerHTML = quiz.e;
+            id = quiz.id;
             counter.innerHTML = `${count + 1}/${questions.length}`;
             startTimer();
         }
