@@ -124,10 +124,8 @@
         }
 
         function startTimer() {
-            let now = 0;
             time = setInterval(function () {
-                now++;
-                timeLeft = timeLeft - now;
+                timeLeft = timeLeft - 1;
                 let minutes = Math.floor(timeLeft / 60);
                 let seconds = timeLeft - minutes * 60;
                 timer.innerHTML = formatTime(minutes) + ":" + formatTime(seconds);
