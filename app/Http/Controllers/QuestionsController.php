@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Question;
 use App\questions;
 use Illuminate\Http\Request;
 
@@ -14,8 +15,15 @@ class QuestionsController extends Controller
      */
     public function index()
     {
-        //
+        $quiz = Question::inRandomOrder()->limit(15)->get();
+        if(\request()->isMethod('post')){
+            $quiz = Question::where('class', request()->type)->inRandomOrder()->limit(15)->get();
+        }
+        return response()->json([
+            'data' => $quiz
+        ]);
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -30,7 +38,7 @@ class QuestionsController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -41,7 +49,7 @@ class QuestionsController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\questions  $questions
+     * @param \App\questions $questions
      * @return \Illuminate\Http\Response
      */
     public function show(questions $questions)
@@ -52,7 +60,7 @@ class QuestionsController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\questions  $questions
+     * @param \App\questions $questions
      * @return \Illuminate\Http\Response
      */
     public function edit(questions $questions)
@@ -63,8 +71,8 @@ class QuestionsController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\questions  $questions
+     * @param \Illuminate\Http\Request $request
+     * @param \App\questions $questions
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, questions $questions)
@@ -75,7 +83,7 @@ class QuestionsController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\questions  $questions
+     * @param \App\questions $questions
      * @return \Illuminate\Http\Response
      */
     public function destroy(questions $questions)

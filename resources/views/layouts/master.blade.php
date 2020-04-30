@@ -23,6 +23,7 @@
 <div class="pt-2">
     @yield('content', 'Default Content')
 </div>
+@yield('script')
 </body>
 </html>
 

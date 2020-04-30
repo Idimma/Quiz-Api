@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\spelling;
+use App\Spelling;
 use Illuminate\Http\Request;
 
 class SpellingController extends Controller
@@ -14,7 +14,13 @@ class SpellingController extends Controller
      */
     public function index()
     {
-        //
+        $quiz = Spelling::inRandomOrder()->limit(10)->get();
+        if(\request()->isMethod('post')){
+            $quiz = Spelling::where('class', request()->type)->inRandomOrder()->limit(15)->get();
+        }
+        return response()->json([
+            'data' => $quiz
+        ]);
     }
 
     /**
