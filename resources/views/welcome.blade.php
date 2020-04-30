@@ -26,29 +26,29 @@
         <form action="{{url('/')}}" method="post">
             @csrf
             <div class="card-body p-lg-4 p-xs-2 p-xl-5">
-                <div class="form-group">
-                    <label for="name">Your Name <span style="font-size: 70%; font-style: italic">(Surname First)</span></label>
-                    <input required id="name" name="name" class="form-control">
+                @isset($error)
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <p class="text-white"><strong>Error !</strong> {{$error}}</p>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <i class="ti ti-close"></i>
+                        </button>
+                    </div>
+                @endisset
+                @if (session('error'))
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <p><strong>Error !</strong> {{session('error')}}</p>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <i class="ti ti-close"></i>
+                        </button>
+                    </div>
+                @endif
+
+                <div class="form-group pt-4">
+                    <label for="name">Enter your Registered ID </label>
+                    <input required id="name" name="user_id" class="form-control">
                 </div>
 
-                <div class="form-group pt-3">
-                    <label for="zone">Select Your Zone</label>
-                    <select  id="zone" name="zone" class="form-control">
-                        @forelse(\App\Zone::get() as $zone)
-                            <option>{{$zone->name}}</option>
-                        @empty
-                            <option disabled>No Zone Added Yet..</option>
-                        @endforelse
-                    </select>
-                </div>
-                <div class="form-group pt-3">
-                    <label for="class">Select Your Age Group</label>
-                    <select id="class" name="class" class="form-control">
-                        <option>6 - 8</option>
-                        <option>9 - 12</option>
-                        <option>Teens</option>
-                    </select>
-                </div>
+
                 <div class="text-center pt-3">
                     <button type="submit" style="width: 120px" class="btn-primary btn  btn-round ">Proceed</button>
                 </div>
@@ -59,7 +59,6 @@
 
 </div>
 
-<script src="https://code.responsivevoice.org/responsivevoice.js?key=mWhii7gw"></script>
 </body>
 </html>
 

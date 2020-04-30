@@ -22,7 +22,7 @@
 
 <div class="pt-2">
 
-    <div class="card radius-10 ml-auto mr-auto mt-4 col-md-8" style="min-height: 70vh">
+    <div class="card radius-10 ml-auto mr-auto mt-4 col-md-8" >
         <div class="card-body p-lg-4 p-xs-2 p-xl-5">
             <h3 class="bold">Instructions</h3>
             <p class="mb-3">
@@ -37,6 +37,7 @@
                 @csrf
                 <input name="name" hidden value="{{$name ?? ''}}">
                 <input name="zone" hidden value="{{$zone ?? ''}}">
+                <input name="user_id" hidden value="{{$$user_id ?? ''}}">
                 <input name="class" hidden value="{{$class ?? ''}}">
                 <div class="py-3">
                     <p>Select Quiz Type</p>

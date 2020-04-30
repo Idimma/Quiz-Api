@@ -17,9 +17,26 @@ use TCG\Voyager\Facades\Voyager;
 Route::get('/', static function () {
     return view('welcome');
 });
+Route::get('/create', static function () {
+    return view('create-student');
+});
+Route::post('/create', static function () {
+    $user_id = 'LP69-Q-' . (\App\Student::count() + 1);
+    $user = \App\Student::create([
+        'user_id' => $user_id,
+        'name' => request()->name,
+        'class' => request()->class,
+        'zone' => request()->zone,
+    ]);
+    return view('user', ['user' => $user]);
+});
 
 Route::post('/', static function () {
-    return view('dashboard', request()->all());
+    $user = \App\Student::where('user_id', request()->user_id)->first();
+    if($user){
+        return view('dashboard', $user->toArray());
+    }
+    return redirect('/')->with('error', 'Student not Found');
 });
 
 Route::post('/quiz', static function () {

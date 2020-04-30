@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('content')
-    <div class="card radius-10 ml-auto mr-auto mt-4 col-md-10 col-sm-11 col-lg-9 col-xl-8" style="min-height: 70vh">
+    <div class="card radius-10 ml-auto mr-auto mt-4 col-md-10 col-sm-11 col-lg-9 col-xl-8" >
         <div class="card-body px-lg-4 px-md-3 px-xl-5 pt-lg-4 pt-md-3 pt-xl-5 ">
             <div style="min-height: 140px;"
                  class="d-flex justify-content-center align-items-center bg-gray radius-5 p-2">
