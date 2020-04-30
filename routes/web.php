@@ -25,6 +25,9 @@ Route::post('/', function () {
 Route::post('/quiz', function () {
     return view('multiple-options', request()->all());
 });
+Route::get('/quiz', function () {
+    return redirect('/');
+});
 
 
 Route::get('/dashboard', function () {

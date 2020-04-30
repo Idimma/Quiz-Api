@@ -34,7 +34,7 @@
                 <div class="form-group pt-3">
                     <label for="zone">Select Your Zone</label>
                     <select  id="zone" name="zone" class="form-control">
-                        @forelse(\App\Zone::get() as $zones)
+                        @forelse(\App\Zone::get() as $zone)
                             <option>{{$zone->name}}</option>
                         @empty
                             <option disabled>No Zone Added Yet..</option>

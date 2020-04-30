@@ -69,8 +69,8 @@
 @section('script')
     <script>
         function getQuizQuestions() {
-            fetch('{{url('api/quiz')}}').then(r=>json()).then(res=> {
-
+            fetch('{{url('api/quiz')}}').then(r => r.json()).then(res => {
+                console.log(res)
             }).catch(console.log)
         }
 
