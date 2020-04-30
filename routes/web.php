@@ -31,16 +31,31 @@ Route::post('/quiz', static function () {
 Route::get('/process', static function () {
     $answers = (array)json_decode(request()->answers, true);
     $keys = array_keys($answers);
-    $questions = \App\Question::whereIn('id', $keys)->get();
+
+    $player = \App\Players::create(
+        [
+            'questions' => $keys,
+            'name' => request()->name,
+            'score' => request()->got,
+            'class' => request()->class,
+            'zone' => request()->zone,
+            'answers' => $answers
+        ]
+    );
+    return redirect("completed/$player->id");
+});
+Route::get('/completed/{id}', static function ($id) {
+    $player = \App\Players::findOrFail($id);
+    $questions = \App\Question::whereIn('id', $player->questions)->get();
 
     return view('correction', [
         'questions' => $questions->toArray(),
-        'name' => request()->name,
-        'score' => request()->got,
-        'total' => count($keys),
-        'class' => request()->class,
-        'zone' => request()->zone,
-        'answers' => $answers
+        'name' => $player->name,
+        'score' => $player->score,
+        'total' => count($questions),
+        'class' => $player->class,
+        'zone' => $player->zone,
+        'answers' => $player->answers
     ]);
 });
 

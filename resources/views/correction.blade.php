@@ -14,17 +14,22 @@
     </style>
     <div class="card radius-10 ml-auto mr-auto mt-4 col-md-11 " style="min-height: 70vh">
         <div class="card-body p-lg-4 p-md-3 p-xl-5">
-            <h5>Results</h5>
-            <p class="pb-3 text-black-50">
+            <h2>Results</h2>
+            <p class="pb-1 text-black-50">
                 Name: {{$name??''}}, &nbsp; &nbsp;
                 Zone: {{$zone??''}}, &nbsp; &nbsp;
                 Age Group: {{$class??''}}, &nbsp; &nbsp;
                 Quiz Score: {{$score.'/'.$total}} &nbsp;
             </p>
+
+            <p class="pb-5 text-black-50">
+                Keys: <span class="">----</span> Got Correctly, &nbsp; &nbsp;
+                <span class="text-danger">----</span> Got Wrong, &nbsp; &nbsp;
+            </p>
             <div class="table-responsive">
-                <table class="table mb-0 table-dark ">
-                    <thead class="thead-dark">
-                    <tr>
+                <table class="table mb-0 radius-5 ">
+                    <thead class="bg-primary text-white radius-5  ">
+                    <tr class="radius-5 ">
                         <th scope="col">#</th>
                         <th scope="col">Question</th>
                         <th scope="col">Answer</th>
