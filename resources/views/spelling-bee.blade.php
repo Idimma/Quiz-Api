@@ -15,7 +15,7 @@
             <div style="min-height: 80px;"
                  class="d-flex flex-column justify-content-center align-items-center  radius-5 pt-3 pb-5">
                 <label for="spell">Enter Spelling</label>
-                <input class="form-control col-md-6 ml-auto mr-auto" id="spell">
+                <input class="form-control col-md-6 ml-auto mr-auto " id="spell">
             </div>
 
 
@@ -39,26 +39,43 @@
     </div>
 @stop
 @section('script')
+    <script src="https://code.responsivevoice.org/responsivevoice.js?key=mWhii7gw"></script>
     <script>
 
+        let words = [], timeLeft = 10,
+            count = 0, answers = {}, timelog = {}, time, id = '0',
+            ans = '', got = 0, timeStarted = false;
 
-        let words = [], count = 0, answers = {}, time, id = '0', ans = '', got = 0, timeStarted = false;
+        const spell = document.getElementById('spell');
+        const timer = document.getElementById("timer");
 
         function stopQuestions() {
             window.location.href =
-                `{{url('/process')}}?name={{$name}}&class={{$class}}&zone={{$zone}}&got=${got}&answers=${JSON.stringify(answers)}`;
+                `{{url('/process')}}?name={{$name}}&class={{$class}}&zone={{$zone}}&got=${got}&timer=${
+                    JSON.stringify(timelog)}&answers=${JSON.stringify(answers)}`;
         }
+
+        spell.addEventListener("keyup", function (event) {
+            // Number 13 is the "Enter" key on the keyboard
+            if (event.keyCode === 13) {
+                // Cancel the default action, if needed
+                event.preventDefault();
+                checkSpelling();
+            }
+        });
 
         function checkSpelling() {
             timeStarted = false;
+            timer.innerHTML = "00:00";
             clearInterval(time);
             if (count >= words.length) {
                 stopQuestions();
             }
-            const spell = document.getElementById('spell');
+
             if (spell) {
                 const word = spell.value;
                 answers[id] = word;
+                timelog[id] = timeLeft;
                 if (word.toLocaleLowerCase() === words[count].word.toLowerCase()) {
                     got++
                 }
@@ -90,20 +107,17 @@
         function startTimer() {
             let now = 0;
             timeStarted = true;
-            // Update the count down every 1 second
-            const timer = document.getElementById("timer");
+            // Update the count down every 1 second;
             time = setInterval(function () {
-                // Find the distance between now and the count down date
+                // Find the timeLeft between now and the count down date
                 now++;
-                let distance = 15 - now;
-                let minutes = Math.floor(distance / 60);
-                let seconds = distance - minutes * 60;
+                timeLeft = timeLeft - now;
+                let minutes = Math.floor(timeLeft / 60);
+                let seconds = timeLeft - minutes * 60;
                 timer.innerHTML = formatTime(minutes) + ":" + formatTime(seconds);
                 // If the count down is finished, write some text
-                if (distance < 0) {
-
-                    timer.innerHTML = "00:00";
-                    checkSpelling()
+                if (timeLeft < 0) {
+                    checkSpelling();
                 }
             }, 1000);
         }
@@ -143,5 +157,6 @@
             window.speechSynthesis.speak(utter);
         }
     </script>
+
 @stop
 
