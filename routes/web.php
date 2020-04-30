@@ -14,32 +14,29 @@
 
 use TCG\Voyager\Facades\Voyager;
 
-Route::get('/', function () {
+Route::get('/', static function () {
     return view('welcome');
 });
 
-Route::post('/', function () {
+Route::post('/', static function () {
     return view('dashboard', request()->all());
 });
 
-Route::post('/quiz', function () {
-    return view('multiple-options', request()->all());
+Route::post('/quiz', static function () {
+    if (request()->type === 'Multiple Options') {
+        return view('multiple-options', request()->all());
+    }
+    return view('spelling-bee', request()->all());
 });
+
+
 Route::get('/quiz', function () {
     return redirect('/');
 });
 
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-});
-Route::get('/quiz/{stage}', function ($stage) {
-    $questions = DB::table($stage)->get();
-    return view('quiz', ['questions' => $questions->toJson()]);
-});
-Route::get('/server/{stage}', function ($stage) {
 
-});
+
 Route::get('/table', function () {
     return view('tables');
 });
@@ -53,7 +50,6 @@ Route::post('/insert', function () {
 
 
 Route::get('/spell', function () {
-
     return view('spell_welcome');
 });
 Route::get('/spell/{user}', function ($user) {
