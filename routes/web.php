@@ -28,13 +28,26 @@ Route::post('/quiz', static function () {
     }
     return view('spelling-bee', request()->all());
 });
+Route::get('/process', static function () {
+    $answers = (array)json_decode(request()->answers, true);
+    $keys = array_keys($answers);
+    $questions = \App\Question::whereIn('id', $keys)->get();
+
+    return view('correction', [
+        'questions' => $questions->toArray(),
+        'name' => request()->name,
+        'score' => request()->got,
+        'total' => count($keys),
+        'class' => request()->class,
+        'zone' => request()->zone,
+        'answers' => $answers
+    ]);
+});
 
 
 Route::get('/quiz', function () {
     return redirect('/');
 });
-
-
 
 
 Route::get('/table', function () {

@@ -74,35 +74,38 @@
     <script>
 
 
-        let questions = [], count = -1, answers = {}, time, id = '0';
+        let questions = [], count = -1, answers = {}, time, id = '0', ans ='', got = 0;
         const submit = document.getElementById("submit");
 
         function stopQuestions() {
-
+            window.location.href =
+                `{{url('/process')}}?name={{$name}}&class={{$class}}&zone={{$zone}}&got=${got}&answers=${JSON.stringify(answers)}`;
         }
 
         function selectOption(opt) {
             clearInterval(time);
-            answers[id] = opt;
+            answers[id] = opt; // === ans;
+            if(opt === ans){
+                got++;
+            }
             document.querySelector('.form-check').disabled = true;
             setTimeout(function () {
+                if ((count + 1) >= questions.length) {
+                    stopQuestions();
+                    return
+                }
                 loadNextQuestion();
-            }, 1500);
+            }, 500);
         }
 
         function loadNextQuestion() {
             count++;
-            if (count > questions.length) {
-                stopQuestions();
-                return
-            }else {
-                document.querySelector('.form-check').disabled = false;
-                const checked = document.querySelector('input[name="option"]:checked');
-                if (checked) {
-                    checked.checked = false;
-                }
-            }
 
+            document.querySelector('.form-check').disabled = false;
+            const checked = document.querySelector('input[name="option"]:checked');
+            if (checked) {
+                checked.checked = false;
+            }
 
             const questionView = document.getElementById("question");
             const counter = document.getElementById("counter");
@@ -120,6 +123,7 @@
             opt4.innerHTML = quiz.d;
             opt5.innerHTML = quiz.e;
             id = quiz.id;
+            ans = quiz.answers.toLowerCase();
             counter.innerHTML = `${count + 1}/${questions.length}`;
             startTimer();
         }
