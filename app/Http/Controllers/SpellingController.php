@@ -16,7 +16,7 @@ class SpellingController extends Controller
     {
         $quiz = Spelling::inRandomOrder()->limit(10)->get();
         if(\request()->isMethod('post')){
-            $quiz = Spelling::where('class', request()->type)->inRandomOrder()->limit(15)->get();
+            $quiz = Spelling::where('class', request()->type)->inRandomOrder()->get();
         }
         return response()->json([
             'data' => $quiz

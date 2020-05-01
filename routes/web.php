@@ -55,6 +55,7 @@ Route::post('/quiz', static function () {
 });
 Route::get('/process', static function () {
     $answers = (array)json_decode(request()->answers, true);
+    $time = (array)json_decode(request()->time, true);
     $keys = array_keys($answers);
 
     $player = \App\Players::create(
@@ -64,6 +65,8 @@ Route::get('/process', static function () {
             'score' => request()->got,
             'class' => request()->class,
             'zone' => request()->zone,
+            'user_id' => request()->zone,
+            'time' => $time,
             'answers' => $answers
         ]
     );

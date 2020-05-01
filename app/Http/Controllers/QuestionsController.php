@@ -15,14 +15,14 @@ class QuestionsController extends Controller
      */
     public function index()
     {
-        $quiz = Question::inRandomOrder()->limit(15)->get();
+        $quiz = Question::inRandomOrder()->get();
         if(\request()->isMethod('post')){
             if(request()->type){
-                $quiz = Question::where('class', request()->type)->inRandomOrder()->limit(15)->get();
+                $quiz = Question::where('class', request()->type)->inRandomOrder()->get();
             }
         }else{
             if(request()->type){
-                $quiz = Question::where('class', request()->type)->inRandomOrder()->limit(15)->get();
+                $quiz = Question::where('class', request()->type)->inRandomOrder()->get();
             }
         }
 

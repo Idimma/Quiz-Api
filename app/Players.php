@@ -6,9 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Players extends Model
 {
-    protected $fillable = ['questions', 'name', 'score', 'class', 'zone', 'answers'];
+    protected $fillable = ['questions', 'name', 'score', 'class', 'zone', 'answers', 'user_id', 'time'];
     protected $casts = [
         'questions' => 'array',
-        'answers' => 'array'
+        'answers' => 'array',
+        'time' => 'array',
     ];
 }

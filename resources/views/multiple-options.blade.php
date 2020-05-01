@@ -76,7 +76,7 @@
 
 
         const cl = '{{$class}}';
-        const Q_TIME = cl === 'Teens' ? 10 : cl === '9 - 12' ? 15 : 10;
+        const Q_TIME = cl === 'Teens' ? 10 : cl === '9 - 12' ? 15 : 20;
         let questions = [], count = -1, answers = {}, time, id = '0', ans = '', got = 0;
         const submit = document.getElementById("submit");
 
