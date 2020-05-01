@@ -25,11 +25,13 @@
     <div class="card radius-10 ml-auto mr-auto mt-4 col-md-8">
         <div class="card-body p-lg-4 p-xs-2 p-xl-5">
             <h3 class="bold">Instructions</h3>
-            <p class="mb-3">
-                @foreach($instructions as $inst)
-                    {{$inst}}<br>
+            <div class="mb-3">
+                @foreach($instructions ?? [] as $inst)
+                    @php
+                     echo $inst->instructions ."<br>"
+                     @endphp
                 @endforeach
-            </p>
+            </div>
             <form action="{{url('quiz')}}" method="post">
                 @csrf
                 <input name="name" hidden value="{{$name ?? ''}}">

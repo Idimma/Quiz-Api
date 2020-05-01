@@ -39,7 +39,7 @@ Route::post('/', static function () {
             'name' => $user->name,
             'user_id' => $user->user_id,
             'class' => $user->class,
-            'types' => $user->types,
+            'types' =>  json_decode($user->types),
             'zone' => $user->zone,
             'instructions' => $instruction
         ]);
