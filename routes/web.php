@@ -34,7 +34,15 @@ Route::post('/create', static function () {
 Route::post('/', static function () {
     $user = \App\Student::where('user_id', request()->user_id)->first();
     if($user){
-        return view('dashboard', $user->toArray());
+        $instruction = \App\Configurations::where('age_group', $user->class)->get();
+        return view('dashboard', [
+            'name' => $user->name,
+            'user_id' => $user->user_id,
+            'class' => $user->class,
+            'types' => $user->types,
+            'zone' => $user->zone,
+            'instructions' => $instruction
+        ]);
     }
     return redirect('/')->with('error', 'Student not Found');
 });

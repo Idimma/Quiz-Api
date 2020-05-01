@@ -22,28 +22,30 @@
 
 <div class="pt-2">
 
-    <div class="card radius-10 ml-auto mr-auto mt-4 col-md-8" >
+    <div class="card radius-10 ml-auto mr-auto mt-4 col-md-8">
         <div class="card-body p-lg-4 p-xs-2 p-xl-5">
             <h3 class="bold">Instructions</h3>
             <p class="mb-3">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed porttitor lectus nibh. Vestibulum ac diam
-                sit amet quam vehicula elementum sed sit amet dui. Vivamus suscipit tortor eget felis porttitor
-                volutpat. Curabitur non nulla sit amet nisl tempus convallis quis ac lectus. Donec rutrum congue leo
-                eget malesuada. Pellentesque in ipsum id orci porta dapibus. Sed porttitor lectus nibh. Donec
-                sollicitudin molestie malesuada. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices
-                posuere cubilia Curae; Donec velit neque, auctor sit amet aliquam vel, ullamcorper sit amet ligula.
+                @foreach($instructions as $inst)
+                    {{$inst}}<br>
+                @endforeach
             </p>
             <form action="{{url('quiz')}}" method="post">
                 @csrf
                 <input name="name" hidden value="{{$name ?? ''}}">
                 <input name="zone" hidden value="{{$zone ?? ''}}">
-                <input name="user_id" hidden value="{{$$user_id ?? ''}}">
+                <input name="user_id" hidden value="{{$user_id ?? ''}}">
                 <input name="class" hidden value="{{$class ?? ''}}">
                 <div class="py-3">
                     <p>Select Quiz Type</p>
                     <select name="type" class="form-control col-5">
-                        <option>Multiple Options</option>
-                        <option>Spelling Bee</option>
+                        @forelse($types ?? [] as $t)
+                            <option>{{$t}}</option>
+                        @empty
+                            <option>Multiple Options</option>
+                            <option>Spelling Bee</option>
+                        @endforelse
+
                     </select>
 
                     <p class="pt-4">
@@ -57,7 +59,6 @@
                 </div>
 
                 <div class="row text-right px-5">
-
                     <button type="submit" class="btn-primary ml-auto btn btn-round"
                             style="width: 120px;">
                         Start Quiz

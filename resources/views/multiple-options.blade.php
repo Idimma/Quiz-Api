@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('content')
-    <div class="card radius-10 ml-auto mr-auto mt-4 col-md-10 col-sm-11 col-lg-9 col-xl-8" >
+    <div class="card radius-10 ml-auto mr-auto mt-4 col-md-10 col-sm-11 col-lg-9 col-xl-8">
         <div class="card-body px-lg-4 px-md-3 px-xl-5 pt-lg-4 pt-md-3 pt-xl-5 ">
             <div style="min-height: 140px;"
                  class="d-flex justify-content-center align-items-center bg-gray radius-5 p-2">
@@ -16,8 +16,9 @@
                 @csrf
                 <input name="name" hidden value="{{$name ?? ''}}">
                 <input name="zone" hidden value="{{$zone ?? ''}}">
+                <input name="user_id" hidden value="{{$user_id ?? ''}}">
                 <input name="class" hidden value="{{$class ?? ''}}">
-                <input name="class" hidden value="{{$count ?? ''}}">
+                <input name="count" hidden value="{{$count ?? ''}}">
                 <input type="submit" hidden id="submit">
                 <div class="row  pl-5">
                     <div class="form-check col-md-6">
@@ -74,18 +75,20 @@
     <script>
 
 
-        let questions = [], count = -1, answers = {}, time, id = '0', ans ='', got = 0;
+        const cl = '{{$class}}';
+        const Q_TIME = cl === 'Teens' ? 10 : cl === '9 - 12' ? 15 : 10;
+        let questions = [], count = -1, answers = {}, time, id = '0', ans = '', got = 0;
         const submit = document.getElementById("submit");
 
         function stopQuestions() {
             window.location.href =
-                `{{url('/process')}}?name={{$name}}&class={{$class}}&zone={{$zone}}&got=${got}&answers=${JSON.stringify(answers)}`;
+                `{{url('/process')}}?name={{$name}}&class={{$class}}&zone={{$zone}}&user_id={{$user_id}}&got=${got}&answers=${JSON.stringify(answers)}`;
         }
 
         function selectOption(opt) {
             clearInterval(time);
             answers[id] = opt; // === ans;
-            if(opt === ans){
+            if (opt === ans) {
                 got++;
             }
             document.querySelector('.form-check').disabled = true;
@@ -128,7 +131,12 @@
         }
 
         function getQuizQuestions() {
-            fetch('{{url('api/quiz')}}').then(r => r.json()).then(res => {
+            fetch('{{url('api/quiz')}}', {
+                method: 'POST',
+                body: JSON.stringify({
+                    type: cl
+                })
+            }).then(r => r.json()).then(res => {
                 questions = res.data;
                 loadNextQuestion();
             }).catch(console.log)
@@ -140,14 +148,14 @@
             return `0${number}`.slice(-2)
         }
 
+
         function startTimer() {
             let now = 0;
             // Update the count down every 1 second
             const timer = document.getElementById("timer");
             time = setInterval(function () {
-                // Find the distance between now and the count down date
                 now++;
-                let distance = 10 - now;
+                let distance = Q_TIME - now;
                 let minutes = Math.floor(distance / 60);
                 let seconds = distance - minutes * 60;
                 timer.innerHTML = formatTime(minutes) + ":" + formatTime(seconds);
