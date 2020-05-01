@@ -90,10 +90,8 @@
             clearInterval(time);
             answers[id] = opt; // === ans;
             time_left = time_left + (Q_TIME - distance); // === ans;
-            timeLeft = timeLeft + '/' + (Q_TIME * questions.length)
-            if (opt === ans) {
-                got++;
-            }
+            timeLeft = `${time_left}/${Q_TIME * questions.length}`;
+            if (opt === ans) {got++;}
 
             document.querySelector('.form-check').disabled = true;
             setTimeout(function () {
