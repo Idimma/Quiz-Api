@@ -64,7 +64,7 @@ Route::get('/process', static function () {
             'score' => request()->got,
             'class' => request()->class,
             'zone' => request()->zone,
-            'user_id' => request()->zone,
+            'user_id' => request()->user_id,
             'time' => request()->time_left,
             'answers' => $answers
         ]
