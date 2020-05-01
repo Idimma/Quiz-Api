@@ -131,12 +131,7 @@
         }
 
         function getQuizQuestions() {
-            fetch('{{url('api/quiz')}}', {
-                method: 'POST',
-                body: JSON.stringify({
-                    type: cl
-                })
-            }).then(r => r.json()).then(res => {
+            fetch('{{url('api/quiz?type=')}}' + cl).then(r => r.json()).then(res => {
                 questions = res.data;
                 loadNextQuestion();
             }).catch(console.log)

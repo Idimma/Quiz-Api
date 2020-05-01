@@ -17,8 +17,15 @@ class QuestionsController extends Controller
     {
         $quiz = Question::inRandomOrder()->limit(15)->get();
         if(\request()->isMethod('post')){
-            $quiz = Question::where('class', request()->type)->inRandomOrder()->limit(15)->get();
+            if(request()->type){
+                $quiz = Question::where('class', request()->type)->inRandomOrder()->limit(15)->get();
+            }
+        }else{
+            if(request()->type){
+                $quiz = Question::where('class', request()->type)->inRandomOrder()->limit(15)->get();
+            }
         }
+
         return response()->json([
             'data' => $quiz
         ]);
