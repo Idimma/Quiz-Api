@@ -77,19 +77,20 @@
 
         const cl = '{{$class}}';
         const Q_TIME = cl === 'Teens' ? 10 : cl === '9 - 12' ? 15 : 20;
-        let distance = Q_TIME;
-        let questions = [], count = -1, answers = {},timeLeft = {}, time, id = '0', ans = '', got = 0;
+        let distance = Q_TIME, time_left = 0;
+        let questions = [], count = -1, answers = {}, timeLeft = '', time, id = '0', ans = '', got = 0;
         const submit = document.getElementById("submit");
 
         function stopQuestions() {
             window.location.href =
-                `{{url('/process')}}?name={{$name}}&class={{$class}}&zone={{$zone}}&user_id={{$user_id}}&got=${got}&answers=${JSON.stringify(answers)}&time=${JSON.stringify(timeLeft)}`;
+                `{{url('/process')}}?name={{$name}}&class={{$class}}&zone={{$zone}}&user_id={{$user_id}}&got=${got}&answers=${JSON.stringify(answers)}&time_left=${timeLeft}`;
         }
 
         function selectOption(opt) {
             clearInterval(time);
             answers[id] = opt; // === ans;
-            timeLeft[id] = Q_TIME - distance; // === ans;
+            time_left = time_left + (Q_TIME - distance); // === ans;
+            timeLeft = timeLeft + '/' + (Q_TIME * questions.length)
             if (opt === ans) {
                 got++;
             }
