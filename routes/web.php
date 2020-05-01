@@ -48,7 +48,7 @@ Route::post('/', static function () {
 });
 
 Route::post('/quiz', static function () {
-    if (request()->type === 'Multiple Options') {
+    if (request()->type === 'Multiple Choice Questions') {
         return view('multiple-options', request()->all());
     }
     return view('spelling-bee', request()->all());
