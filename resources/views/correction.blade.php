@@ -41,10 +41,10 @@
                         <tr @if ($answers[$question['id']] !== strtolower( $question['answers']))
                             class="bg-danger text-white"
                                 @endif>
-                            <td>{{$question['id']}}</td>
+                            <td>{{$question['id'] ?? ''}}</td>
                             <td>{{$question['questions'] ?? ''}}</td>
-                            <td>{{$question[strtolower( $question['answers'])]}}</td>
-                            <td>{{$question[$answers[$question['id']]]}}</td>
+                            <td>{{$question[strtolower( $question['answers'])] ?? ''}}</td>
+                            <td>{{$question[$answers[$question['id']]] ?? ''}}</td>
                         </tr>
                     @endforeach
 
