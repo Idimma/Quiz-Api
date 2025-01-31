@@ -28,8 +28,8 @@
             <div class="mb-3">
                 @foreach($instructions ?? [] as $inst)
                     @php
-                     echo $inst->instructions ."<br>"
-                     @endphp
+                        echo $inst->instructions ."<br>"
+                    @endphp
                 @endforeach
             </div>
             <form action="{{url('quiz')}}" method="post">

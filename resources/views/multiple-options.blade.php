@@ -75,99 +75,111 @@
     <script>
 
 
-        const cl = '{{$class}}';
-        const Q_TIME = cl === 'Teens' ? 10 : cl === '9 - 12' ? 15 : 20;
-        let distance = Q_TIME, time_left = 0;
-        let questions = [], count = -1, answers = {}, timeLeft = '', time, id = '0', ans = '', got = 0;
-        const submit = document.getElementById("submit");
+			const cl = '{{$class}}';
+			const Q_TIME = cl === 'Teens' ? 10 : cl === '9 - 12' ? 15 : 20;
+			let distance = Q_TIME, time_left = 0;
+			let questions = [], count = -1, answers = {}, timeLeft = '', time, id = '0', ans = '', got = 0;
+			const submit = document.getElementById("submit");
 
-        function stopQuestions() {
-            window.location.href =
-                `{{url('/process')}}?name={{$name}}&class={{$class}}&zone={{$zone}}&user_id={{$user_id}}&got=${got}&answers=${JSON.stringify(answers)}&time_left=${timeLeft}`;
-        }
+			function stopQuestions() {
+				window.location.href =
+					`{{url('/process')}}?name={{$name}}&class={{$class}}&zone={{$zone}}&user_id={{$user_id}}&got=${got}&answers=${JSON.stringify(answers)}&time_left=${timeLeft}`;
+			}
 
-        function selectOption(opt) {
-            clearInterval(time);
-            answers[id] = opt; // === ans;
-            time_left = time_left + (Q_TIME - distance); // === ans;
-            timeLeft = `${time_left}/${Q_TIME * questions.length}`;
-            if (opt === ans) {got++;}
+			function selectOption(opt) {
+				clearInterval(time);
+				answers[id] = opt; // === ans;
+				time_left = time_left + (Q_TIME - distance); // === ans;
+				timeLeft = `${time_left}/${Q_TIME * questions.length}`;
+				if (opt === ans) {
+					got++;
+				}
 
-            document.querySelector('.form-check').disabled = true;
-            setTimeout(function () {
-                if ((count + 1) >= questions.length) {
-                    stopQuestions();
-                    return
-                }
-                loadNextQuestion();
-            }, 500);
-        }
+				document.querySelector('.form-check').disabled = true;
+				setTimeout(function () {
+					if ((count + 1) >= questions.length) {
+						stopQuestions();
+						return
+					}
+					loadNextQuestion();
+				}, 500);
+			}
 
-        function loadNextQuestion() {
-            count++;
-            document.querySelector('.form-check').disabled = false;
-            const checked = document.querySelector('input[name="option"]:checked');
-            if (checked) {
-                checked.checked = false;
-            }
+			function loadNextQuestion() {
+				count++;
+				document.querySelector('.form-check').disabled = false;
+				const checked = document.querySelector('input[name="option"]:checked');
+				if (checked) {
+					checked.checked = false;
+				}
 
-            const questionView = document.getElementById("question");
-            const counter = document.getElementById("counter");
-            const opt1 = document.getElementById("option1");
-            const opt2 = document.getElementById("option2");
-            const opt3 = document.getElementById("option3");
-            const opt4 = document.getElementById("option4");
-            const opt5 = document.getElementById("option5");
-            const quiz = questions[count];
-
-            questionView.innerHTML = quiz.questions;
-            opt1.innerHTML = quiz.a;
-            opt2.innerHTML = quiz.b;
-            opt3.innerHTML = quiz.c;
-            opt4.innerHTML = quiz.d;
-            opt5.innerHTML = quiz.e;
-            id = quiz.id;
-            ans = quiz.answers.toLowerCase();
-            counter.innerHTML = `${count + 1}/${questions.length}`;
-            startTimer();
-        }
-
-        function getQuizQuestions() {
-            fetch('{{url('api/quiz?type=')}}' + cl).then(r => r.json()).then(res => {
-                questions = res.data;
-                loadNextQuestion();
-            }).catch(console.log)
-        }
-
-        getQuizQuestions();
-
-        function formatTime(number) {
-            return `0${number}`.slice(-2)
-        }
+				const questionView = document.getElementById("question");
+				const counter = document.getElementById("counter");
 
 
-        function startTimer() {
-            let now = 0;
-            // Update the count down every 1 second
-            const timer = document.getElementById("timer");
-            time = setInterval(function () {
-                now++;
-                distance = Q_TIME - now;
-                let minutes = Math.floor(distance / 60);
-                let seconds = distance - minutes * 60;
-                timer.innerHTML = formatTime(minutes) + ":" + formatTime(seconds);
-                // If the count down is finished, write some text
-                if (distance < 0) {
-                    clearInterval(time);
-                    timer.innerHTML = "00:00";
-                    selectOption('')
-                }
-            }, 1000);
-        }
+				const renderOption = (opt, ele) => {
+					const element = document.getElementById(ele);
+					if (element) {
+						if (!opt) {
+							element.hidden = true;
+						} else {
+							element.innerHTML = opt;
+						}
+					}
+				}
+				const quiz = questions[count];
+				const {c, e, a, answer, d, b, id: id1, question} = quiz;
 
-        function submitForm() {
-            submit.click();
-        }
+				questionView.innerHTML = question;
+				renderOption(a, 'option1')
+				renderOption(b, 'option2')
+				renderOption(c, 'option3')
+				renderOption(d, 'option4')
+				renderOption(e, 'option5')
+
+
+				id = id1;
+				ans = answer.toLowerCase();
+				counter.innerHTML = `${count + 1}/${questions.length}`;
+				startTimer();
+			}
+
+			function getQuizQuestions() {
+				fetch('{{url('api/quiz?type=')}}' + cl).then(r => r.json()).then(res => {
+					questions = res.data;
+					loadNextQuestion();
+				}).catch(console.log)
+			}
+
+			getQuizQuestions();
+
+			function formatTime(number) {
+				return `0${number}`.slice(-2)
+			}
+
+
+			function startTimer() {
+				let now = 0;
+				// Update the count down every 1 second
+				const timer = document.getElementById("timer");
+				time = setInterval(function () {
+					now++;
+					distance = Q_TIME - now;
+					let minutes = Math.floor(distance / 60);
+					let seconds = distance - minutes * 60;
+					timer.innerHTML = formatTime(minutes) + ":" + formatTime(seconds);
+					// If the count down is finished, write some text
+					if (distance < 0) {
+						clearInterval(time);
+						timer.innerHTML = "00:00";
+						selectOption('')
+					}
+				}, 1000);
+			}
+
+			function submitForm() {
+				submit.click();
+			}
     </script>
 @stop
 

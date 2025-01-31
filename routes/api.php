@@ -20,7 +20,6 @@ Route::middleware('auth:api')->get('/user', static function (Request $request) {
 Route::post('login', 'Auth\LoginController@login');
 Route::post('quiz', 'QuestionsController@index');
 Route::get('quiz', 'QuestionsController@index');
-Route::get('quiz', 'QuestionsController@index');
 Route::post('spelling', 'SpellingController@index');
 Route::get('spelling', 'SpellingController@index');
 Route::post('logout', 'Auth\LoginController@logout');

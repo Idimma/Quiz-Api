@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateStep4sTable extends Migration
+class CreateConfigsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,10 @@ class CreateStep4sTable extends Migration
      */
     public function up()
     {
-        Schema::create('step4s', function (Blueprint $table) {
+        Schema::create('configs', function (Blueprint $table) {
             $table->increments('id');
+            $table->text('instructions');
+            $table->string('age_group');
             $table->timestamps();
         });
     }
@@ -26,6 +28,6 @@ class CreateStep4sTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('step4s');
+        Schema::dropIfExists('step2s');
     }
 }

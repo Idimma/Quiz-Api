@@ -12,7 +12,6 @@
 */
 
 
-use TCG\Voyager\Facades\Voyager;
 
 Route::get('/', static function () {
     return view('welcome');
@@ -48,7 +47,8 @@ Route::post('/', static function () {
 });
 
 Route::post('/quiz', static function () {
-    if (request()->type === 'Multiple Choice Questions') {
+
+    if (str(request()->type)->lower()->contains('multiple')) {
         return view('multiple-options', request()->all());
     }
     return view('spelling-bee', request()->all());
@@ -108,7 +108,6 @@ Route::get('/spell', function () {
     return view('spell_welcome');
 });
 Route::get('/spell/{user}', function ($user) {
-
     return view('spell', ['user' => $user, 'no' => 1, 'score' => 0]);
 });
 
@@ -133,7 +132,6 @@ Route::post('/spell-insert', function () {
 });
 
 Route::get('/spell-insert', function () {
-
     return view('spell_insert');
 });
 
@@ -160,5 +158,5 @@ Route::post('/spell', function () {
 
 
 Route::group(['prefix' => 'admin'], function () {
-    Voyager::routes();
+    TCG\Voyager\Facades\Voyager::routes() ;
 });
