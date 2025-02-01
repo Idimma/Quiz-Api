@@ -17,7 +17,7 @@
                 <label for="spell">Enter Spelling</label>
                 <input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
                        placeholder="Enter word you hear"
-                       class="form-control col-md-6 ml-auto mr-auto " style="height: 50px; max-width: 300px"
+                       class="form-control col-md-6 ml-auto mr-auto text-uppercase " style="height: 56px!important; max-width: 330px"
                        id="spell"/>
                 <p style="font-size: 60%" class="text-danger p-0">You can press enter when done</p>
             </div>
@@ -36,9 +36,9 @@
         </div>
 
         <p class="text-center px-lg-4 px-md-3 px-xl-5 pb-2" style="font-size: 60%">
-            Name: {{$name??''}} &nbsp;
-            Zone: {{$zone??''}} &nbsp;
-            Age Group: {{$class??''}} &nbsp;
+            Name: {{$student->name??''}} &nbsp;
+            Type: {{$student->type??''}} &nbsp;
+            Level: {{$student->level??''}} &nbsp;
         </p>
     </div>
 @stop
@@ -46,8 +46,8 @@
     <script>
 			const QUESTIONS_LIST = {!! json_encode($words) !!};
 			const QUESTION_COUNT = QUESTIONS_LIST.length
-			const type = '{{$zone}}';
-			const level = '{{$class}}';
+			const type = '{{$student->type ?? ''}}';
+			const level = '{{$student->level??''}}';
 			const Q_TIME = 15;
 			const timeSpent = new Array(QUESTIONS_LIST.length).fill(0);
 			const answers = new Array(QUESTIONS_LIST.length).fill('');
@@ -66,10 +66,10 @@
 					answers: JSON.stringify(QUESTIONS_LIST.map(w => w.toUpperCase())),
 					given_answers: JSON.stringify(answers.map(w => w.toUpperCase())),
 					questions: JSON.stringify(QUESTIONS_LIST.map(w => `Spell "${w.toUpperCase()}"`)),
-					name: "{{ $name }}",
+					name: "{{ $student->name }}",
 					type,
 					level,
-					user_id: "{{ $user_id }}",
+					user_id: "{{ $student->user_id }}",
 					score,
 					meta: JSON.stringify({maxTime: Q_TIME * QUESTION_COUNT,}),
 					seconds_used: timeSpent.reduce((p, c) => c + p, 0),
@@ -128,6 +128,7 @@
 					doneButton.style.display = 'block'
 					timeLeft = Q_TIME;
 				}
+				counter.innerHTML = `${CURRENT_INDEX + 1}/${QUESTION_COUNT}`
 				time = setInterval(function () {
 					timeLeft = timeLeft - 1;
 					let minutes = Math.floor(timeLeft / 60);
@@ -152,7 +153,7 @@
 				}
 				let utter = new SpeechSynthesisUtterance();
 				utter.rate = 1;
-				utter.pitch = 0.5;
+				utter.pitch = 0.9;
 				utter.text = `Spell ${word}`;
 				utter.voice = english_voice;
 				utter.onend = function () {

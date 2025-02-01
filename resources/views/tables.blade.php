@@ -52,6 +52,6 @@
             </div>
         </div>
     </div>
-    <div style="  margin-top: 20px" class="text-center">Powered by GIDICODES Copyright &copy {{now()->year}}</div>
+
 
 @stop

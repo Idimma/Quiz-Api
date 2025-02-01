@@ -49,15 +49,18 @@ class QuizController extends Controller
         return redirect('/')->with('error', 'Student not Found');
     }
 
-    public function quiz(Request $request)
+    public function quiz(Request $request, Student $student)
     {
         if (str(request()->type)->lower()->contains('multiple')) {
-            $questions = Question::where('type', $request->zone)->inRandomOrder()->take(15)->get();
-            return view('multiple-options', $request->merge(['questions' => $questions])->all());
+            $questions = Question::where('type', $student->type)->inRandomOrder()->take(15)->get();
+            return view('multiple-options', $request->merge([
+                'questions' => $questions,
+                'student' => $student
+            ])->all());
         }
 
-        $words = Spelling::pluck('word')->toArray();
-        return view('spelling-bee', request()->merge(['words' => $words])->all());
+        $words = Spelling::inRandomOrder()->take(15)->pluck('word')->toArray();
+        return view('spelling-bee', request()->merge(['words' => $words, 'student' => $student])->all());
     }
 
     public function process(Request $request)

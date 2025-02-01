@@ -19,6 +19,7 @@ Route::get('/create', [QuizController::class, 'create']);
 Route::post('/create', [QuizController::class, 'store']);
 Route::post('/', [QuizController::class, 'quizEntry']);
 Route::post('/quiz', [QuizController::class, 'quiz']);
+Route::post('/quiz/{student:user_id}', [QuizController::class, 'quiz']);
 Route::get('/process', [QuizController::class, 'process']);
 Route::get('/completed/{player}', [QuizController::class, 'completed']);
 
