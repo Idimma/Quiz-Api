@@ -5,8 +5,7 @@ namespace App\database\migrations;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-
-class AddsApiTokenToUsersTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -31,4 +30,4 @@ class AddsApiTokenToUsersTable extends Migration
             $table->dropColumn(['api_token']);
         });
     }
-}
+};
