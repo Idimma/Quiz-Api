@@ -2,6 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Players;
+use App\Question;
+use App\Spelling;
+use App\Student;
+use Illuminate\Http\Request;
+
 class QuizController extends Controller
 {
     public function welcome()
@@ -16,7 +22,7 @@ class QuizController extends Controller
 
     public function store()
     {
-        $user = \App\Student::create([
+        $user = Student::create([
             'user_id' => request()->phone,
             'name' => request()->name,
             'class' => request()->class,
@@ -28,7 +34,7 @@ class QuizController extends Controller
 
     public function quizEntry()
     {
-        $user = \App\Student::where('user_id', request()->user_id)->first();
+        $user = Student::where('user_id', request()->user_id)->first();
         if ($user) {
             $instruction = \App\Configurations::where('age_group', $user->class)->get();
             return view('dashboard', [
@@ -43,49 +49,51 @@ class QuizController extends Controller
         return redirect('/')->with('error', 'Student not Found');
     }
 
-    public function quiz()
+    public function quiz(Request $request)
     {
-
         if (str(request()->type)->lower()->contains('multiple')) {
-            return view('multiple-options', request()->all());
+            $questions = Question::where('type', $request->zone)->inRandomOrder()->take(15)->get();
+            return view('multiple-options', $request->merge(['questions' => $questions])->all());
         }
-        return view('spelling-bee', request()->all());
+
+        $words = Spelling::pluck('word')->toArray();
+        return view('spelling-bee', request()->merge(['words' => $words])->all());
     }
 
-    public function process()
+    public function process(Request $request)
     {
-        $answers = (array)json_decode(request()->answers, true);
-        $keys = array_keys($answers);
-
-        $player = \App\Players::create(
-            [
-                'questions' => $keys,
-                'name' => request()->name,
-                'score' => request()->got,
-                'class' => request()->class,
-                'zone' => request()->zone,
-                'user_id' => request()->user_id,
-                'time' => request()->time_left,
-                'answers' => $answers
-            ]
-        );
+        $validatedData = $request->all();
+        $validatedData['questions'] = json_decode($request->questions, true) ?? [];
+        $validatedData['answers'] = json_decode($request->answers, true) ?? [];
+        $validatedData['given_answers'] = json_decode($request->given_answers, true) ?? [];
+        $validatedData['seconds_spread'] = json_decode($request->seconds_spread, true) ?? [];
+        $validatedData['meta'] = json_decode($request->meta, true) ?? [];
+        $player = Players::create($validatedData);
         return redirect("completed/$player->id");
     }
 
-    public function completed($id)
+    public function completed(Players $player)
     {
-        $player = \App\Players::findOrFail($id);
-        $questions = \App\Question::whereIn('id', $player->questions)->get();
+        return view('correction', $player->toArray());
+    }
 
-        return view('correction', [
-            'questions' => $questions->toArray(),
-            'name' => $player->name,
-            'score' => $player->score,
-            'total' => count($questions),
-            'class' => $player->class,
-            'zone' => $player->zone,
-            'answers' => $player->answers
-        ]);
+    public function leaderBoard()
+    {
+        $players = Players::orderBy('percent', 'desc')->get();
+        return view('tables', ['players' => $players]);
+    }
 
+
+    function storeSpelling(Request $request)
+    {
+        $data = $request->only(['word', 'type', 'level']);
+        Spelling::updateOrCreate($data, $data);
+        return redirect("spellings");
+    }
+
+    function spellings(Request $request)
+    {
+        $spellings = Spelling::get();
+        return view('spell_insert', ['spellings' => $spellings]);
     }
 }

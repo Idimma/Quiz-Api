@@ -1,59 +1,75 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>RCCG Quiz</title>
-    <link href="{{asset('css/bootstrap.css')}}" rel="stylesheet">
-    <link rel="stylesheet" href="{{asset('css/style.css')}}" type="text/css">
-</head>
-<body class="container-fluid " style="background-color: white; color: black">
+@extends('layouts.master')
 
-<div>
-    <header class="row body_header " style="color: white">
-        <div class="col-md-3 text-center">
-            <img src="{{asset('images/rccglogo.jpeg')}}" height="80px">
-        </div>
-        <div class="col-md-6 text-center">
-            <h2 style="text-align: center; "> BIBLE QUIZ</h2>
-        </div>
-        <div class="col-md-3 text-center">
-            <img src="{{asset('images/rccglogo.jpeg')}}" height="80px">
-        </div>
+@section('content')
+    <div class=" radius-10 ml-auto mr-auto mt-4 col-md-11 " style="min-height: 70vh">
+        <div class="card-body">
+            <div class="d-flex justify-content-between">
+                <h1>Spellings</h1>
+                <a href="{{url('/')}}" class="text-primary " style="font-size: 16px">
+                    <span>Home</span>
+                </a>
+            </div>
 
-    </header>
-
-    <main class="modal-content dashboard row"
-          style="width: 80%; height: auto; margin: auto;    padding: 7px;    border-radius: 5px;    border: 1px #ccc solid;
-    position: relative;">
-        <!--<div class="dashboard">-->
-        <!--<h2>Test Your Bible Knowledge</h2>-->
-        <div class="bdd col-md-6 col-md-offset-3">
-            <form method="post" action="{{url('spell-insert')}}">
-                {{csrf_field()}}
-                <div class="row">
-                    <input required type="text" name="spell" placeholder="Your Name"/>
-                </div>
-                <div class="row">
-                    <div style="margin-top: 20px" class="btn-nav text-center">
-                        <button class="nextbutton nextbuttonbackgroundsvg  " title="SUBMIT"
-                                name="startnew"
-                                type="submit"
-                                value="SUBMIT" type="button">
-                            Start
-                        </button>
+            <div class="row">
+                <div class="col-md-8" style="max-height: 60vh; overflow-y: auto">
+                    <div class="table-responsive">
+                        <table class="table mb-0 radius-5 ">
+                            <thead class="bg-primary text-white radius-5  ">
+                            <tr class="radius-5">
+                                <th scope="col">#</th>
+                                <th scope="col">Word</th>
+                                <th scope="col">Level</th>
+                                <th scope="col"></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach($spellings as $index => $spell )
+                                <tr>
+                                    <td>#{{$index+ 1}}</td>
+                                    <td>{{$spell->word}}</td>
+                                    <td>{{$spell->level}}</td>
+                                    <td></td>
+                                </tr>
+                            @endforeach
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-            </form>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body  p-lg-4 p-md-3 p-xl-5">
+                            <form method="post" action="{{url('spellings')}}">
+                                {{csrf_field()}}
+                                <div>
+                                    <label>Word</label>
+                                    <input required type="text" class="form-control w-100" name="word"
+                                           placeholder="Word: Habakuku"/>
+                                </div>
+                                <div class="mt-3">
+                                    <label>Level</label>
+                                    <select required class="form-control" name="level">
+                                        <option>Level 1</option>
+                                        <option>Level 2</option>
+                                        <option>Level 3</option>
+                                        <option>Level 4</option>
+                                        <option>Level 5</option>
+                                    </select>
+                                    <input hidden value="Bible" name="type"/>
+                                </div>
+                                <div class="row">
+                                    <div style="margin-top: 20px" class="d-flex">
+                                        <button class="btn-primary  mx-auto btn btn-round " title="SUBMIT"
+                                                type="submit">
+                                            Save
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <!--</div>-->
-    </main>
+    </div>
 
-</div>
-
-<script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
-<script src="js/bootstrap.min.js"></script>
-<script type="text/javascript" src="js/game.js">
-</script>
-</body>
-</html>
-
+@stop

@@ -6,7 +6,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration{
+return new class extends Migration {
     /**
      * Run the migrations.
      *
@@ -22,10 +22,19 @@ return new class extends Migration{
             $table->string('name')->nullable();
             $table->longText('questions')->nullable();
             $table->longText('answers')->nullable();
-            $table->string('score')->nullable();
-            $table->string('class')->nullable();
-            $table->string('zone')->nullable();
-            $table->text('time')->nullable();
+            $table->longText('given_answers')->nullable();
+            $table->float('score', 8)->default(0);
+            $table->float('percent', 8)->default(0);
+
+            $table->integer('no_questions')->default(0);
+            $table->integer('seconds_used')->default(0);
+            $table->integer('seconds_allocated')->default(0);
+            $table->integer('seconds_expected')->default(0);
+            $table->text('seconds_spread')->nullable();
+
+            $table->string('type')->nullable();
+            $table->string('level')->nullable();
+            $table->string('question_type')->nullable();
             $table->text('meta')->nullable();
             $table->timestamps();
         });

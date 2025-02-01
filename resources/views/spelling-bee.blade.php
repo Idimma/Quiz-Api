@@ -10,15 +10,15 @@
             </div>
             <div class="d-flex pt-5 justify-content-center align-items-center  text-center">
                 <h4 id="timer" class="text-center col-6">00:00</h4>
-                <h4 id="counter" class="text-center col-6">1/15</h4>
+                <h4 id="counter" class="text-center col-6">1/{{count($words)}}</h4>
             </div>
             <div style="min-height: 80px;"
                  class="d-flex flex-column justify-content-center align-items-center  radius-5 pt-3 pb-5">
                 <label for="spell">Enter Spelling</label>
-                <input
-                        oninput="showDone(this)"
-                        autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
-                        class="form-control col-md-6 ml-auto mr-auto " style="height: 50px" id="spell">
+                <input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+                       placeholder="Enter word you hear"
+                       class="form-control col-md-6 ml-auto mr-auto " style="height: 50px; max-width: 300px"
+                       id="spell"/>
                 <p style="font-size: 60%" class="text-danger p-0">You can press enter when done</p>
             </div>
 
@@ -28,7 +28,7 @@
                     SAY WORD
                 </button>
                 <button id="doneButton" style="display: none" class="btn-warning ml-5 mr-auto btn bg-warning btn-round "
-                        onclick="done()">
+                        onclick="checkSpelling()">
                     DONE
                 </button>
             </div>
@@ -44,119 +44,122 @@
 @stop
 @section('script')
     <script>
-
-        let words = [], timeLeft = 10,
-            count = 0, answers = {}, timelog = {}, time, id = '0',
-            ans = '', got = 0, timeStarted = false;
-        const spell = document.getElementById('spell');
-        const timer = document.getElementById("timer");
-        const counter = document.getElementById("counter");
-        const doneButton = document.getElementById("doneButton");
-
-        function done() {
-            checkSpelling()
-        }
-
-        function showDone(input) {
-            const text = input.value;
-            if (text.length > 0) {
-                doneButton.style.display = 'block'
-            } else {
-                doneButton.style.display = 'none'
-            }
-        }
-
-        function stopQuestions() {
-            window.location.href =
-                `{{url('/process')}}?name={{$name}}&class={{$class}}&zone={{$zone}}&got=${got}&timer=${
-                    JSON.stringify(timelog)}&answers=${JSON.stringify(answers)}`;
-        }
+			const QUESTIONS_LIST = {!! json_encode($words) !!};
+			const QUESTION_COUNT = QUESTIONS_LIST.length
+			const type = '{{$zone}}';
+			const level = '{{$class}}';
+			const Q_TIME = 15;
+			const timeSpent = new Array(QUESTIONS_LIST.length).fill(0);
+			const answers = new Array(QUESTIONS_LIST.length).fill('');
+			let timeLeft = Q_TIME, CURRENT_INDEX = 0, time, score = 0, timeStarted = false;
 
 
-        spell.addEventListener("keyup", function (event) {
-            if (event.keyCode === 13) {
-                event.preventDefault();
-                done();
-            }
-        });
-
-        function checkSpelling() {
-            timeStarted = false;
-            timer.innerHTML = "00:00";
-            clearInterval(time);
-            if (count >= words.length) {
-                stopQuestions();
-            }
-
-            if (spell) {
-                const word = spell.value;
-                answers[id] = word;
-                timelog[id] = timeLeft;
-                if (word.toLocaleLowerCase() === words[count].word.toLowerCase()) {
-                    got++
-                }
-            }
-            spell.value = '';
-            count++
-        }
+			const spell = document.getElementById('spell');
+			const timer = document.getElementById("timer");
+			const counter = document.getElementById("counter");
+			const doneButton = document.getElementById("doneButton");
 
 
-        function getWords() {
-            fetch('{{url('api/spelling')}}').then(r => r.json()).then(res => {
-                words = res.data;
-                counter.innerHTML = `${count + 1}/${words.length}`;
-            }).catch(console.log)
-        }
-
-        getWords();
-
-        function sayWord() {
-            if (timeLeft === 10) {
-                startTimer();
-                return pronounWord(words[count].word)
-            }
-            counter.innerHTML = `${count + 1}/${words.length}`;
-            pronounWord(words[count].word)
-        }
-
-        function formatTime(number) {
-            return `0${number}`.slice(-2)
-        }
-
-        function startTimer() {
-            time = setInterval(function () {
-                timeLeft = timeLeft - 1;
-                let minutes = Math.floor(timeLeft / 60);
-                let seconds = timeLeft - minutes * 60;
-                timer.innerHTML = formatTime(minutes) + ":" + formatTime(seconds);
-                if (timeLeft < 0) {
-                    checkSpelling();
-                }
-            }, 1000);
-        }
+			const stopQuestions = () => {
+				const baseUrl = "{{ url('/process') }}";
+				const params = new URLSearchParams({
+					answers: JSON.stringify(QUESTIONS_LIST.map(w => w.toUpperCase())),
+					given_answers: JSON.stringify(answers.map(w => w.toUpperCase())),
+					questions: JSON.stringify(QUESTIONS_LIST.map(w => `Spell "${w.toUpperCase()}"`)),
+					name: "{{ $name }}",
+					type,
+					level,
+					user_id: "{{ $user_id }}",
+					score,
+					meta: JSON.stringify({maxTime: Q_TIME * QUESTION_COUNT,}),
+					seconds_used: timeSpent.reduce((p, c) => c + p, 0),
+					seconds_spread: JSON.stringify(timeSpent),
+					seconds_allocated: Q_TIME,
+					seconds_expected: Q_TIME * QUESTION_COUNT,
+					no_questions: QUESTION_COUNT,
+					question_type: 'Spelling Bee',
+					percent: score / QUESTION_COUNT,
+				});
+				window.location.href = `${baseUrl}?${params.toString()}`
+			};
 
 
-        function pronounWord(word) {
-            let available_voices = window.speechSynthesis.getVoices();
-            let english_voice = available_voices[49];
+			spell.addEventListener("keypress", function (event) {
+				if (event.code === 'Enter') {
+					event.preventDefault();
+					const word = spell.value;
+					if (!word.length) return sayWord();
+					checkSpelling();
+				}
+			});
 
-            for (var i = 0; i < available_voices.length; i++) {
-                if (available_voices[i].lang === 'en-GB' && available_voices[i].name === "Google UK English Female") {
-                    english_voice = available_voices[i];
-                    break;
-                }
-            }
+			function checkSpelling() {
+				timeStarted = false;
+				timer.innerHTML = "00:00";
+				doneButton.style.display = 'none'
+				clearInterval(time);
+				if (spell) {
+					const word = spell.value;
+					answers[CURRENT_INDEX] = word;
+					timeSpent[CURRENT_INDEX] = Q_TIME - timeLeft;
+					if (word.toLocaleLowerCase() === QUESTIONS_LIST[CURRENT_INDEX].toLowerCase()) {
+						score++
+					}
+					spell.value = '';
+				}
+				CURRENT_INDEX++
 
-            let utter = new SpeechSynthesisUtterance();
-            utter.rate = 1;
-            utter.pitch = 0.5;
-            utter.text = `Spell ${word}`;
-            utter.voice = english_voice;
-            utter.onend = function () {
-                // alert('Speech has finished');
-            };
-            window.speechSynthesis.speak(utter);
-        }
+				if (CURRENT_INDEX >= QUESTIONS_LIST.length) {
+					stopQuestions();
+				}
+			}
+
+
+			function sayWord() {
+				if (!timeStarted) startTimer();
+				pronounWord(QUESTIONS_LIST[CURRENT_INDEX])
+			}
+
+			const formatTime = number => `0${number}`.slice(-2);
+
+			const startTimer = () => {
+				if (!timeStarted) {
+					timeStarted = true
+					doneButton.style.display = 'block'
+					timeLeft = Q_TIME;
+				}
+				time = setInterval(function () {
+					timeLeft = timeLeft - 1;
+					let minutes = Math.floor(timeLeft / 60);
+					let seconds = timeLeft - minutes * 60;
+					timer.innerHTML = formatTime(minutes) + ":" + formatTime(seconds);
+					if (timeLeft < 0) {
+						checkSpelling();
+					}
+				}, 1000);
+			};
+
+
+			function pronounWord(word) {
+				let available_voices = window.speechSynthesis.getVoices();
+				let english_voice = available_voices[49];
+
+				for (var i = 0; i < available_voices.length; i++) {
+					if (available_voices[i].lang === 'en-GB' && available_voices[i].name === "Google UK English Female") {
+						english_voice = available_voices[i];
+						break;
+					}
+				}
+				let utter = new SpeechSynthesisUtterance();
+				utter.rate = 1;
+				utter.pitch = 0.5;
+				utter.text = `Spell ${word}`;
+				utter.voice = english_voice;
+				utter.onend = function () {
+					// alert('Speech has finished');
+				};
+				window.speechSynthesis.speak(utter);
+			}
     </script>
 
 @stop

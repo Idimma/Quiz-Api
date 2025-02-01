@@ -1,42 +1,57 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>RCCG Quiz</title>
-    <link href="{{asset('css/bootstrap.css')}}" rel="stylesheet">
-    <link rel="stylesheet" href="{{asset('css/style.css')}}" type="text/css">
-</head>
-<body class="container-fluid " style="background-color: #147119; color: black">
+@extends('layouts.master')
+@section('content')
 
-<div>
-    <header class="row body_header " style="color: white">
-        <div class="col-lg-3 col-md-3 col-sm-3 text-center">
-            <img src="{{asset('images/rccglogo.jpeg')}}" height="80px">
-        </div>
-        <div class="col-lg-6 col-md-6 col-sm-6">
-            <h4 id="title" class="title text-center">Tables</h4>
-        </div>
-        <div class="col-lg-3 col-md-3 col-sm-3 text-center">
-            <img src="{{asset('images/rccglogo.jpeg')}}" height="80px">
-        </div>
-    </header>
-    <main class="quest modal-content">
-        <div style="margin: 5px">
-            <table class="table">
-                <thead id="table_head">
-                </thead>
-                <tbody style="margin-left: 20px; margin-right: 20px" id="tables_row">
-                </tbody>
-            </table>
-        </div>
-    </main>
-    <div style="color: white; margin-top: 20px" class="text-center">Powered by GIDICODES Copyright &copy 2019</div>
+    <style>
+        p {
+            color: white
+        }
 
-</div>
+        td {
+            white-space: pre-wrap !important;
+            font-size: 1rem;
+            line-height: 1.714rem;
+            text-align: left;
+        }
+    </style>
+    <div class="card radius-10 ml-auto mr-auto mt-4 col-md-11 " style="min-height: 70vh">
+        <div class="card-body p-lg-4 p-md-3 p-xl-5">
+            <div class="d-flex justify-content-between">
+                <h1>Leader Board</h1>
+                <a href="{{url('/')}}" class="text-primary " style="font-size: 16px">
+                    <span>Home</span>
+                </a>
+            </div>
 
+            <div class="table-responsive">
+                <table class="table mb-0 radius-5 ">
+                    <thead class="bg-primary text-white radius-5  ">
+                    <tr class="radius-5 ">
+                        <th scope="col">#</th>
+                        <th scope="col">Player</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Score</th>
+                        <th scope="col">Percent</th>
+                        <th scope="col">Duration</th>
+                        <th scope="col">Time</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach($players as $index => $player )
+                        <tr>
+                            <td>#{{$index+ 1}}</td>
+                            <td>{{$player->name}}</td>
+                            <td>{{$player->question_type}}</td>
+                            <td>{{$player->score}}/{{$player->no_questions}}</td>
+                            <td>{{number_format($player->percent *100, 0)}}%</td>
+                            <td>{{$player->seconds_used}} Sec</td>
+                            <td>{{Carbon\Carbon::parse ($player->created_at)->diffForHumans()}}</td>
+                        </tr>
+                    @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div style="  margin-top: 20px" class="text-center">Powered by GIDICODES Copyright &copy {{now()->year}}</div>
 
-<script type="text/javascript" src="{{asset('js/jquery-3.2.1.min.js')}}"></script>
-<script type="text/javascript" src="{{asset('js/game.js')}}"></script>
-<script src="{{asset('js/bootstrap.min.js')}}"></script>
-</body>
-</html>
+@stop

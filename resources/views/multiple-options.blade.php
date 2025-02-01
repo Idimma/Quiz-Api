@@ -33,14 +33,7 @@
                 <h4 id="timer" class="text-center col-6">00:00</h4>
                 <h4 id="counter" class="text-center col-6"></h4>
             </div>
-            <form action="{{url('next-question')}}" method="post">
-                @csrf
-                <input name="name" hidden value="{{$name ?? ''}}">
-                <input name="zone" hidden value="{{$zone ?? ''}}">
-                <input name="user_id" hidden value="{{$user_id ?? ''}}">
-                <input name="class" hidden value="{{$class ?? ''}}">
-                <input name="count" hidden value="{{$count ?? ''}}">
-                <input type="submit" hidden id="submit">
+            <div>
                 <div class="row  px-5">
                     <label for="a" class="form-check col-md-6">
                         <input class="form-check-input" type="radio" name="option" onchange="selectOption('a')" id="a"
@@ -78,7 +71,7 @@
                         </label>
                     </label>
                 </div>
-            </form>
+            </div>
         </div>
         <div class="d-flex px-lg-4 px-md-3 px-xl-5 pb-2 justify-content-between">
             <p class="text-left text-danger " style="font-size: 60%">
@@ -95,49 +88,69 @@
 @section('script')
     <script>
 
-
+			const QUESTIONS_LIST = {!! $questions !!};
+			const QUESTION_COUNT = QUESTIONS_LIST.length
 			const type = '{{$zone}}';
 			const level = '{{$class}}';
 			const Q_TIME = 15;
-			let distance = Q_TIME, time_left = 0;
-			let questions = [], count = -1, answers = {}, timeLeft = '', time, id = '0', ans = '', got = 0;
-			const submit = document.getElementById("submit");
+			const givenAnswers = new Array(QUESTIONS_LIST.length).fill("");
+			const timeSpent = new Array(QUESTIONS_LIST.length).fill(0);
 
-			function stopQuestions() {
-				window.location.href =
-					`{{url('/process')}}?name={{$name}}&class={{$class}}&zone={{$zone}}&user_id={{$user_id}}&got=${got}&answers=${JSON.stringify(answers)}&time_left=${timeLeft}`;
-			}
+			let secondsUsed = Q_TIME;
+			let currentIndex = -1, time, score = 0;
+
+			const stopQuestions = () => {
+				const baseUrl = "{{ url('/process') }}";
+
+				let maxTime = Q_TIME * QUESTION_COUNT;
+				const params = new URLSearchParams({
+					name: "{{ $name }}",
+					type,
+					level,
+					user_id: "{{ $user_id }}",
+					score,
+					meta: JSON.stringify({maxTime,}),
+
+					seconds_used: timeSpent.reduce((p, c) => c + p, 0),
+					seconds_spread: JSON.stringify(timeSpent),
+					seconds_allocated: Q_TIME,
+					seconds_expected: Q_TIME * QUESTION_COUNT,
+
+					no_questions: QUESTION_COUNT,
+					question_type: 'Multiple Choice Questions',
+					percent: score / QUESTION_COUNT,
+					given_answers: JSON.stringify(givenAnswers),
+					answers: JSON.stringify(QUESTIONS_LIST.map(q => q[q.answer])),
+					questions: JSON.stringify(QUESTIONS_LIST.map(q => q.question)),
+				});
+				window.location.href = `${baseUrl}?${params.toString()}`;
+			};
 
 			function selectOption(opt) {
 				clearInterval(time);
-				answers[id] = opt; // === ans;
-				time_left = time_left + (Q_TIME - distance); // === ans;
-				timeLeft = `${time_left}/${Q_TIME * questions.length}`;
-				if (opt === ans) {
-					got++;
-				}
+				const quiz = QUESTIONS_LIST[currentIndex];
+
+				givenAnswers[currentIndex] = quiz[opt] || '';
+
+				timeSpent[currentIndex] = Q_TIME - secondsUsed;
+
+				if (opt === quiz.answer) score++;
 
 				document.querySelector('.form-check').disabled = true;
-				setTimeout(function () {
-					if ((count + 1) >= questions.length) {
-						stopQuestions();
-						return
-					}
-					loadNextQuestion();
-				}, 500);
+
+				setTimeout(loadNextQuestion, 500);
 			}
 
+
 			function loadNextQuestion() {
-				count++;
+				currentIndex++;
+				if (currentIndex >= QUESTION_COUNT) return stopQuestions();
+
 				document.querySelector('.form-check').disabled = false;
 				const checked = document.querySelector('input[name="option"]:checked');
-				if (checked) {
-					checked.checked = false;
-				}
-
+				if (checked) checked.checked = false;
 				const questionView = document.getElementById("question");
 				const counter = document.getElementById("counter");
-
 
 				const renderOption = (opt, ele) => {
 					const element = document.getElementById(ele);
@@ -149,51 +162,36 @@
 						}
 					}
 				}
-				const quiz = questions[count];
 
+				const quiz = QUESTIONS_LIST[currentIndex];
 				if (quiz) {
-					const {c, e, a, answer, d, b, id: id1, question} = quiz;
-
+					startTimer();
+					counter.innerHTML = `${currentIndex + 1}/${QUESTIONS_LIST.length}`;
+					const {c, e, a, answer, d, b, question} = quiz;
 					questionView.innerHTML = question;
 					renderOption(a, 'option1')
 					renderOption(b, 'option2')
 					renderOption(c, 'option3')
 					renderOption(d, 'option4')
 					renderOption(e, 'option5')
-
-					id = id1;
-					ans = answer.toLowerCase();
-					counter.innerHTML = `${count + 1}/${questions.length}`;
-					startTimer();
 				}
-
-
 			}
 
-			function getQuizQuestions() {
-				questions = @json(App\Question::where('type', $zone)->inRandomOrder()->take(15)->get());
-				loadNextQuestion();
-			}
 
-			getQuizQuestions();
-
-			function formatTime(number) {
-				return `0${number}`.slice(-2)
-			}
-
+			const formatTime = number => `0${number}`.slice(-2);
 
 			function startTimer() {
 				let now = 0;
-				// Update the count down every 1 second
 				const timer = document.getElementById("timer");
+				timer.innerHTML = "00:15";
 				time = setInterval(function () {
 					now++;
-					distance = Q_TIME - now;
-					let minutes = Math.floor(distance / 60);
-					let seconds = distance - minutes * 60;
+					secondsUsed = Q_TIME - now;
+					let minutes = Math.floor(secondsUsed / 60);
+					let seconds = secondsUsed - minutes * 60;
 					timer.innerHTML = formatTime(minutes) + ":" + formatTime(seconds);
-					// If the count down is finished, write some text
-					if (distance < 0) {
+
+					if (secondsUsed < 0) {
 						clearInterval(time);
 						timer.innerHTML = "00:00";
 						selectOption('')
@@ -201,9 +199,9 @@
 				}, 1000);
 			}
 
-			function submitForm() {
-				submit.click();
-			}
+
+			loadNextQuestion();
+
     </script>
 @stop
 

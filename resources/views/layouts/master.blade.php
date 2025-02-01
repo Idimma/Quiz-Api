@@ -13,11 +13,11 @@
 <body class="d-flex  flex-column">
 
 <header style=" background: #0E1558 !important;" class="text-center text-white mb-3 py-2 ">
-    <div class="d-flex justify-content-center align-items-center">
+    <a href="{{url('/')}}" class="d-flex justify-content-center align-items-center">
         <img height="45" width="45" src="{{asset('images/rccg_img.png')}}">
-        <h1 class="ml-3 bold text-white">BIBLE QUIZ PORTAL</h1>
-    </div>
-    <p class="text-white">Web based quiz portal for children department</p>
+        <h1 class="ml-3 mb-0 bold text-white">BIBLE QUIZ PORTAL</h1>
+    </a>
+    <p class="text-white">Web based quiz portal for all</p>
 </header>
 
 <div class="pt-2">

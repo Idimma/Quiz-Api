@@ -19,8 +19,8 @@ Route::get('/create', [QuizController::class, 'create']);
 Route::post('/create', [QuizController::class, 'store']);
 Route::post('/', [QuizController::class, 'quizEntry']);
 Route::post('/quiz', [QuizController::class, 'quiz']);
-Route::get('/process', [QuizController::class,  'process']);
-Route::get('/completed/{id}', [QuizController::class, 'completed']);
+Route::get('/process', [QuizController::class, 'process']);
+Route::get('/completed/{player}', [QuizController::class, 'completed']);
 
 
 Route::get('/quiz', function () {
@@ -28,9 +28,7 @@ Route::get('/quiz', function () {
 });
 
 
-Route::get('/table', function () {
-    return view('tables');
-});
+Route::get('/table', [QuizController::class, 'leaderBoard']);
 Route::get('/insert', function () {
     return view('insert');
 });
@@ -56,20 +54,8 @@ Route::post('/spelling', function () {
     return redirect("spell/$name/1");
 });
 
-Route::post('/spell-insert', function () {
-    $word = request()->spell;
-    $s = new \App\Spelling();
-    $s->word = ucwords($word);
-    $s->user = '';
-    $s->is_right = 0;
-    $s->answer = '';
-    $s->save();
-    return redirect("spell-insert");
-});
-
-Route::get('/spell-insert', function () {
-    return view('spell_insert');
-});
+Route::post('/spellings', [QuizController::class, 'storeSpelling']);
+Route::get('/spellings', [QuizController::class, 'spellings']);
 
 
 Route::post('/spell', function () {
