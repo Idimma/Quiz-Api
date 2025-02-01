@@ -92,7 +92,3 @@ Route::post('/spell', function () {
 
 });
 
-
-Route::group(['prefix' => 'admin'], function () {
-    TCG\Voyager\Facades\Voyager::routes() ;
-});

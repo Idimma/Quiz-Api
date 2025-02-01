@@ -146,7 +146,7 @@
 			}
 
 			function getQuizQuestions() {
-                questions = @json(App\Question::where('class', $zone)->inRandomOrder()->take(15)->get());
+                questions = @json(App\Question::where('type', $zone)->inRandomOrder()->take(15)->get());
 				loadNextQuestion();
 			}
 
