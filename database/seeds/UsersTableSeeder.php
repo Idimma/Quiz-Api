@@ -1,6 +1,9 @@
 <?php
 
+namespace App\database\seeds;
+
 use App\User;
+use Hash;
 use Illuminate\Database\Seeder;
 
 class UsersTableSeeder extends Seeder

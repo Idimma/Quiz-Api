@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Question;
-use App\questions;
 use Illuminate\Http\Request;
 
 class QuestionsController extends Controller
@@ -13,14 +12,9 @@ class QuestionsController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index()
+    public function index(Request $request)
     {
-        $quiz = Question::inRandomOrder()->get();
-        if (\request()->isMethod('post')) {
-            if (request()->type) {
-                $quiz = Question::where('class', request()->type)->inRandomOrder()->get();
-            }
-        }
+        $quiz = Question::where('type', $request->get('type'))->inRandomOrder()->take(15)->get();
         return response()->json(['data' => $quiz]);
     }
 

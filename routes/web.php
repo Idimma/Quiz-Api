@@ -12,79 +12,15 @@
 */
 
 
+use App\Http\Controllers\QuizController;
 
-Route::get('/', static function () {
-    return view('welcome');
-});
-Route::get('/create', static function () {
-    return view('create-student');
-});
-Route::post('/create', static function () {
-    $user_id = 'LP69-Q-' . (\App\Student::count() + 1);
-    $user = \App\Student::create([
-        'user_id' => $user_id,
-        'name' => request()->name,
-        'class' => request()->class,
-        'zone' => request()->zone,
-    ]);
-    return view('user', ['user' => $user]);
-});
-
-Route::post('/', static function () {
-    $user = \App\Student::where('user_id', request()->user_id)->first();
-    if($user){
-        $instruction = \App\Configurations::where('age_group', $user->class)->get();
-        return view('dashboard', [
-            'name' => $user->name,
-            'user_id' => $user->user_id,
-            'class' => $user->class,
-            'types' =>  json_decode($user->types),
-            'zone' => $user->zone,
-            'instructions' => $instruction
-        ]);
-    }
-    return redirect('/')->with('error', 'Student not Found');
-});
-
-Route::post('/quiz', static function () {
-
-    if (str(request()->type)->lower()->contains('multiple')) {
-        return view('multiple-options', request()->all());
-    }
-    return view('spelling-bee', request()->all());
-});
-Route::get('/process', static function () {
-    $answers = (array)json_decode(request()->answers, true);
-    $keys = array_keys($answers);
-
-    $player = \App\Players::create(
-        [
-            'questions' => $keys,
-            'name' => request()->name,
-            'score' => request()->got,
-            'class' => request()->class,
-            'zone' => request()->zone,
-            'user_id' => request()->user_id,
-            'time' => request()->time_left,
-            'answers' => $answers
-        ]
-    );
-    return redirect("completed/$player->id");
-});
-Route::get('/completed/{id}', static function ($id) {
-    $player = \App\Players::findOrFail($id);
-    $questions = \App\Question::whereIn('id', $player->questions)->get();
-
-    return view('correction', [
-        'questions' => $questions->toArray(),
-        'name' => $player->name,
-        'score' => $player->score,
-        'total' => count($questions),
-        'class' => $player->class,
-        'zone' => $player->zone,
-        'answers' => $player->answers
-    ]);
-});
+Route::get('/', [QuizController::class, 'welcome']);
+Route::get('/create', [QuizController::class, 'create']);
+Route::post('/create', [QuizController::class, 'store']);
+Route::post('/', [QuizController::class, 'quizEntry']);
+Route::post('/quiz', [QuizController::class, 'quiz']);
+Route::get('/process', [QuizController::class,  'process']);
+Route::get('/completed/{id}', [QuizController::class, 'completed']);
 
 
 Route::get('/quiz', function () {

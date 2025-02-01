@@ -1,5 +1,7 @@
 <?php
 
+namespace App\database\seeds;
+
 use App\Article;
 use Illuminate\Database\Seeder;
 

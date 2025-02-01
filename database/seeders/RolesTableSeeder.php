@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Seeders;
+namespace App\database\seeders;
 
 use Illuminate\Database\Seeder;
 use TCG\Voyager\Models\Role;

@@ -8,7 +8,7 @@
         td {
             white-space: pre-wrap !important;
             font-size: 1rem;
-            line-height: 1.714rem ;
+            line-height: 1.714rem;
             text-align: left;
         }
     </style>
@@ -23,8 +23,8 @@
             </p>
 
             <p class="pb-5 text-black-50">
-                Keys: <span class="">----</span> Got Correctly, &nbsp; &nbsp;
-                <span class="text-danger">----</span> Got Wrong, &nbsp; &nbsp;
+                Keys: <span class="dot bg-success"></span> Got Correctly, &nbsp; &nbsp;
+                <span class="dot bg-danger"></span> Got Wrong, &nbsp; &nbsp;
             </p>
             <div class="table-responsive">
                 <table class="table mb-0 radius-5 ">
@@ -38,21 +38,20 @@
                     </thead>
                     <tbody>
                     @foreach($questions as $question)
-                        <tr @if ($answers[$question['id']] !== strtolower( $question['answers']))
-                            class="bg-danger text-white"
-                                @endif>
-                            <td>{{$question['id'] ?? ''}}</td>
-                            <td>{{$question['questions'] ?? ''}}</td>
-                            <td>{{$question[strtolower( $question['answers'])] ?? ''}}</td>
-                            <td>{{$question[$answers[$question['id']]] ?? ''}}</td>
+                        <tr>
+                            <td>
+                                {{$question['id'] ?? ''}}
+                            </td>
+                            <td>{{$question['question'] ?? ''}}</td>
+                            <td>{{$question[strtolower( $question['answer'])] ?? ''}}</td>
+                            <td class=" text-white   {{ $answers[$question['id']] !== strtolower( $question['answer'])? 'bg-danger ' :'bg-success' }} ">
+                                {{$question[$answers[$question['id']]] ?? ''}}
+                            </td>
                         </tr>
                     @endforeach
-
                     </tbody>
                 </table>
             </div>
         </div>
-
     </div>
 @stop
-

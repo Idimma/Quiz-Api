@@ -15,6 +15,10 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Schema::defaultStringLength(191);
+        if (app()->environment('local')) {
+            error_reporting(E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED);
+        }
+
     }
 
     /**

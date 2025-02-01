@@ -65,8 +65,8 @@
             </p>
             <p class="text-right" style="font-size: 60%">
                 Name: {{$name??''}} &nbsp;
-                Zone: {{$zone??''}} &nbsp;
-                Age Group: {{$class??''}} &nbsp;
+                Type: {{$zone??''}} &nbsp;
+                Level: {{$class??''}} &nbsp;
             </p>
         </div>
     </div>
@@ -75,8 +75,9 @@
     <script>
 
 
-			const cl = '{{$class}}';
-			const Q_TIME = cl === 'Teens' ? 10 : cl === '9 - 12' ? 15 : 20;
+			const type = '{{$zone}}';
+			const level = '{{$class}}';
+			const Q_TIME = 15;
 			let distance = Q_TIME, time_left = 0;
 			let questions = [], count = -1, answers = {}, timeLeft = '', time, id = '0', ans = '', got = 0;
 			const submit = document.getElementById("submit");
@@ -145,10 +146,8 @@
 			}
 
 			function getQuizQuestions() {
-				fetch('{{url('api/quiz?type=')}}' + cl).then(r => r.json()).then(res => {
-					questions = res.data;
-					loadNextQuestion();
-				}).catch(console.log)
+                questions = @json(App\Question::where('class', $zone)->inRandomOrder()->take(15)->get());
+				loadNextQuestion();
 			}
 
 			getQuizQuestions();

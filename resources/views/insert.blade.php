@@ -14,7 +14,7 @@
             <img src="{{asset('images/rccglogo.jpeg')}}" height="80px">
         </div>
         <div class="col-md-6 text-center">
-            <h2 style="text-align: center; ">RCCG LP 69 BILBE QUIZ</h2>
+            <h2 style="text-align: center; "> BILBE QUIZ</h2>
         </div>
         <div class="col-md-3 text-center">
             <img src="{{asset('images/rccglogo.jpeg')}}" height="80px">

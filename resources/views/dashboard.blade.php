@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <!-- app favicon -->
     <link rel="shortcut icon" href="{{asset('images/rccg_img.png')}}">
-    <title>RCCG LP 69 Quiz Portal</title>
+    <title> Quiz Portal</title>
     <link href="{{asset('css/index.css')}}" rel="stylesheet">
     <link rel="stylesheet" href="{{asset('css/style.css')}}" type="text/css">
 </head>
@@ -15,14 +15,13 @@
 <header style=" background: #0E1558 !important;" class="text-center text-white mb-3 py-2 ">
     <div class="d-flex justify-content-center align-items-center">
         <img height="45" width="45" src="{{asset('images/rccg_img.png')}}">
-        <h1 class="ml-3 bold text-white">R.C.C.G LP 69</h1>
+        <h1 class="ml-3 bold text-white">BIBLE QUIZ PORTAL</h1>
     </div>
-    <p class="text-white">Web based quiz portal for children department</p>
+    <p class="text-white">Web based quiz portal for all</p>
 </header>
 
 <div class="pt-2">
-
-    <div class="card radius-10 ml-auto mr-auto mt-4 col-md-8">
+    <div class="card radius-10 ml-auto mr-auto mt-4 col-md-7">
         <div class="card-body p-lg-4 p-xs-2 p-xl-5">
             <h3 class="bold">Instructions</h3>
             <div class="mb-3">
@@ -38,6 +37,10 @@
                 <input name="zone" hidden value="{{$zone ?? ''}}">
                 <input name="user_id" hidden value="{{$user_id ?? ''}}">
                 <input name="class" hidden value="{{$class ?? ''}}">
+
+                <div>
+                    Welcome <span class="bold text-primary">{{$name ?? ''}},</span>
+                </div>
                 <div class="py-3">
                     <p>Select Quiz Type</p>
                     <select name="type" class="form-control col-5">
@@ -51,12 +54,7 @@
                     </select>
 
                     <p class="pt-4">
-                        I <span class="bold text-primary">{{$name ?? ''}},</span> from
-                        <span class="underline">
-                        {{$zone ?? 'Selected Zone '}}
-                    </span> confirm that I am in the age group <span
-                                class="medium text-black-50"> {{$class ?? ''}}</span>
-                        and I have read and understood the instructions stated above
+                        I have read and understood the instructions stated above
                     </p>
                 </div>
 
