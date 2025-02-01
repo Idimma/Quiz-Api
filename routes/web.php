@@ -58,7 +58,7 @@ Route::post('/spelling', function () {
 
 Route::post('/spell-insert', function () {
     $word = request()->spell;
-    $s = new \App\spelling();
+    $s = new \App\Spelling();
     $s->word = ucwords($word);
     $s->user = '';
     $s->is_right = 0;
