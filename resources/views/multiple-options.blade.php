@@ -1,5 +1,26 @@
 @extends('layouts.master')
 @section('content')
+    <style>
+        .form-check-label p {
+            font-size: 16px;
+            color: black;
+        }
+
+        #question {
+            font-size: 24px;
+            font-weight: bold;
+            color: black;
+        }
+
+        .form-check {
+            border-color: rgb(236, 238, 243);
+            border-width: 3px;
+            border-style: solid;
+            cursor: pointer;
+            border-radius: 19px;
+            margin: 10px;
+        }
+    </style>
     <div class="card radius-10 ml-auto mr-auto mt-4 col-md-10 col-sm-11 col-lg-9 col-xl-8">
         <div class="card-body px-lg-4 px-md-3 px-xl-5 pt-lg-4 pt-md-3 pt-xl-5 ">
             <div style="min-height: 140px;"
@@ -20,42 +41,42 @@
                 <input name="class" hidden value="{{$class ?? ''}}">
                 <input name="count" hidden value="{{$count ?? ''}}">
                 <input type="submit" hidden id="submit">
-                <div class="row  pl-5">
-                    <div class="form-check col-md-6">
+                <div class="row  px-5">
+                    <label for="a" class="form-check col-md-6">
                         <input class="form-check-input" type="radio" name="option" onchange="selectOption('a')" id="a"
                                value="a">
                         <label class="form-check-label" for="a">
                             <p id="option1"></p>
                         </label>
-                    </div>
-                    <div class="form-check col-md-6">
+                    </label>
+                    <label for="b" class="form-check col-md-6">
                         <input class="form-check-input" type="radio" id="b" onchange="selectOption('b')" name="option"
                                value="b">
                         <label class="form-check-label" for="b">
                             <p id="option2"></p>
                         </label>
-                    </div>
-                    <div class="form-check col-md-6">
+                    </label>
+                    <label for="c" class="form-check col-md-6">
                         <input class="form-check-input" type="radio" onchange="selectOption('c')" id="c" name="option"
                                value="c">
                         <label class="form-check-label" for="c">
                             <p id="option3"></p>
                         </label>
-                    </div>
-                    <div class="form-check col-md-6">
+                    </label>
+                    <label for="d" class="form-check col-md-6">
                         <input class="form-check-input" id="d"
                                onchange="selectOption('d')" type="radio" value="d" name="option">
                         <label class="form-check-label" for="d">
                             <p id="option4"></p>
                         </label>
-                    </div>
-                    <div class="form-check col-md-6 ">
+                    </label>
+                    <label for="e" class="form-check col-md-6 ">
                         <input class="form-check-input" onchange="selectOption('e')" id="e" type="radio" name="option"
                                value="e">
                         <label class="form-check-label" for="e">
                             <p id="option5"></p>
                         </label>
-                    </div>
+                    </label>
                 </div>
             </form>
         </div>
@@ -122,31 +143,35 @@
 					const element = document.getElementById(ele);
 					if (element) {
 						if (!opt) {
-							element.hidden = true;
+							element.parentElement.parentElement.className = "d-none";
 						} else {
 							element.innerHTML = opt;
 						}
 					}
 				}
 				const quiz = questions[count];
-				const {c, e, a, answer, d, b, id: id1, question} = quiz;
 
-				questionView.innerHTML = question;
-				renderOption(a, 'option1')
-				renderOption(b, 'option2')
-				renderOption(c, 'option3')
-				renderOption(d, 'option4')
-				renderOption(e, 'option5')
+				if (quiz) {
+					const {c, e, a, answer, d, b, id: id1, question} = quiz;
+
+					questionView.innerHTML = question;
+					renderOption(a, 'option1')
+					renderOption(b, 'option2')
+					renderOption(c, 'option3')
+					renderOption(d, 'option4')
+					renderOption(e, 'option5')
+
+					id = id1;
+					ans = answer.toLowerCase();
+					counter.innerHTML = `${count + 1}/${questions.length}`;
+					startTimer();
+				}
 
 
-				id = id1;
-				ans = answer.toLowerCase();
-				counter.innerHTML = `${count + 1}/${questions.length}`;
-				startTimer();
 			}
 
 			function getQuizQuestions() {
-                questions = @json(App\Question::where('type', $zone)->inRandomOrder()->take(15)->get());
+				questions = @json(App\Question::where('type', $zone)->inRandomOrder()->take(15)->get());
 				loadNextQuestion();
 			}
 
