@@ -67,8 +67,8 @@ class QuizController extends Controller
             ])->all());
         }
 
-        $words = Spelling::inRandomOrder()->take(15)->pluck('word')->toArray();
-        return view('spelling-bee', request()->merge(['words' => $words, 'student' => $student])->all());
+        $spellings = Spelling::inRandomOrder()->take(15)->get();
+        return view('spelling-bee', request()->merge(['spellings' => $spellings, 'student' => $student])->all());
     }
 
     public function process(Request $request)

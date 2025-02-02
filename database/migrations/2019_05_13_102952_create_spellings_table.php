@@ -5,6 +5,7 @@ namespace App\database\migrations;
 use App\Spelling;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
@@ -17,6 +18,7 @@ return new class extends Migration {
             $table->string('word');
             $table->string('type')->nullable();
             $table->string('level')->nullable();
+            $table->longText('audio')->nullable();
             $table->timestamps();
         });
         $spellings = [
@@ -92,9 +94,24 @@ return new class extends Migration {
             ['word' => 'Armageddon', 'level' => 'Level 4', 'type' => 'Bible'],
             ['word' => 'Eschatology', 'level' => 'Level 4', 'type' => 'Bible'],
         ];
-
-        foreach ($spellings as $spelling)
+        $apiKey = env('GOOGLE_TTS_API_KEY');
+        foreach ($spellings as $spelling) {
+            $url = "https://texttospeech.googleapis.com/v1/text:synthesize?key={$apiKey}";
+            $word = $spelling['word'];
+            $response = Http::post($url, [
+                'input' => ['text' => "Spell " . $word],
+                'voice' => [
+                    'languageCode' => 'en-AU',
+                    'name' => 'en-AU-Polyglot-1',
+                    'ssmlGender' => 'MALE'
+                ],
+                'audioConfig' => ['audioEncoding' => 'MP3']
+            ]);
+            $data = $response->json();
+            if (!isset($data['audioContent'])) continue;
+            $spelling['audio'] = $data['audioContent'];
             Spelling::updateOrCreate($spelling, $spelling);
+        }
 
 
     }
