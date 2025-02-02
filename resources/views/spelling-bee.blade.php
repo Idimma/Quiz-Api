@@ -153,7 +153,7 @@
 				}
 				let utter = new SpeechSynthesisUtterance();
 				utter.rate = 1;
-				utter.pitch = 0.9;
+				utter.pitch = 0.4;
 				utter.text = `Spell ${word}`;
 				utter.voice = english_voice;
 				utter.onend = function () {

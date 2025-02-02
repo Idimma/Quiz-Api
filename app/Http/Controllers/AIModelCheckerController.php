@@ -28,11 +28,12 @@ class AIModelCheckerController extends Controller
         $prompt = "You are an AI specialized in evaluating answer accuracy. Compare the user's response to the correct answer and return a similarity score as a percentage. " . PHP_EOL . PHP_EOL .
             "### Question:\n{$question}" . PHP_EOL .
             "### Correct Answer:\n{$answer}" . PHP_EOL .
-            "### User's Response:\n{$userAnswer}" . PHP_EOL .
-            "Provide only a numerical similarity score between 0 and 100.";
+            "### User's Response:\n{$userAnswer}" . PHP_EOL . PHP_EOL . PHP_EOL .
+            "- Provide only a numerical similarity score between 0 and 100." . PHP_EOL .
+            "- Response with JSON using this example format {'similarity_score': 70}". PHP_EOL ;
 
         $payload = [
-            'model' => 'tinyllama',
+            'model' => 'llama3.2',
             'prompt' => $prompt,
             'stream' => false,
             'format' => 'json'
@@ -43,7 +44,8 @@ class AIModelCheckerController extends Controller
 
             if ($response->successful()) {
                 $result = $response->json();
-                return isset($result['response']) ? intval($result['response']) : 0;
+                $similarityObj = json_decode(trim($result['response']), true); //"{"similarity_score": 80}"
+                return isset($similarityObj['similarity_score']) ? (float)$similarityObj['similarity_score'] : 0;
             } else {
                 return 0;
             }

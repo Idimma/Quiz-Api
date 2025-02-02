@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AIModelCheckerController;
 use Illuminate\Http\Request;
 
 /*
@@ -25,7 +26,9 @@ Route::get('spelling', 'SpellingController@index');
 Route::post('logout', 'Auth\LoginController@logout');
 Route::post('register', 'Auth\RegisterController@register');
 
-Route::group(['middleware' => 'auth:api'], static function() {
+Route::post('ai-evaluation', [AIModelCheckerController::class, 'evaluate']);
+
+Route::group(['middleware' => 'auth:api'], static function () {
     Route::get('articles', 'ArticleController@index');
     Route::get('articles/{article}', 'ArticleController@show');
     Route::post('articles', 'ArticleController@store');
