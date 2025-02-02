@@ -59,6 +59,14 @@ class QuizController extends Controller
             ])->all());
         }
 
+        if (str(request()->type)->lower()->contains('blank')) {
+            $questions = BlankParagraph::where('type', $student->type)->inRandomOrder()->take(15)->get();
+            return view('multiple-options', $request->merge([
+                'questions' => $questions,
+                'student' => $student
+            ])->all());
+        }
+
         $words = Spelling::inRandomOrder()->take(15)->pluck('word')->toArray();
         return view('spelling-bee', request()->merge(['words' => $words, 'student' => $student])->all());
     }
