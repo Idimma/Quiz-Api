@@ -12,23 +12,31 @@
     <link rel="stylesheet" href="{{asset('css/style.css')}}" type="text/css">
     <style>
         body {
-            min-height: 100vh;
+            height: 100vh;
             max-width: 100%;
-            overflow-x: hidden;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
         }
 
         * {
             box-sizing: border-box;
         }
 
+        .app-content{
+            flex: 1;
+            overflow-y: auto;
+            padding: 0.25rem 0;
+        }
 
         .credit {
             padding: 20px 10px;
             font-size: 10px;
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            left: 0
+            /*position: absolute;*/
+            /*bottom: 0;*/
+            /*right: 0;*/
+            /*left: 0*/
         }
 
         .fade-in {
@@ -84,14 +92,15 @@
             .title-text {
                 font-size: 20px;
             }
-            .card-body{
-                padding: 1rem;
+
+            .card-body {
+                padding: 1rem !important;
             }
         }
 
     </style>
 </head>
-<body class="d-flex position-relative flex-column">
+<body>
 <div id="loadingIndicator">
     <div class="spinner"></div>
 </div>
@@ -105,9 +114,9 @@
     </a>
 </header>
 
-<div class="pt-2">
+<main class="app-content">
     @yield('content', 'Default Content')
-</div>
+</main>
 <div class="credit text-center">
     Powered by <code class="d-inline">GIDICODES</code> Copyright &copy {{now()->year}}
 </div>
