@@ -3,7 +3,7 @@
     <div class="card radius-10 ml-auto mr-auto mt-4 col-md-5">
         <form action="{{url('/')}}" method="post">
             @csrf
-            <div class="card-body p-lg-4 p-xs-2 p-xl-5">
+            <div class="card-body p-lg-4 p-xs-2 p-3 p-xl-5">
                 <h1 class="text-center">Welcome to Bible Quiz Portal</h1>
 
                 @isset($error)

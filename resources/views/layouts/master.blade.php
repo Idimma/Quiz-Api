@@ -4,15 +4,24 @@
     <meta charset="UTF-8">
     <meta name="author" content="Gidicodes">
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <!-- app favicon -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <link rel="shortcut icon" href="{{asset('images/rccg_img.png')}}">
-    <title> Quiz Portal</title>
+    {{--    <script src="https://cdn.tailwindcss.com"></script>--}}
+    <title>Quiz Portal</title>
     <link href="{{asset('css/index.css')}}" rel="stylesheet">
     <link rel="stylesheet" href="{{asset('css/style.css')}}" type="text/css">
     <style>
-        body{
+        body {
             min-height: 100vh;
+            max-width: 100%;
+            overflow-x: hidden;
         }
+
+        * {
+            box-sizing: border-box;
+        }
+
+
         .credit {
             padding: 20px 10px;
             font-size: 10px;
@@ -65,6 +74,21 @@
                 transform: rotate(360deg);
             }
         }
+
+        @media screen and (max-width: 768px) {
+            .row-no-gutter {
+                margin-right: 20px;
+                margin-left: 20px;
+            }
+
+            .title-text {
+                font-size: 20px;
+            }
+            .card-body{
+                padding: 1rem;
+            }
+        }
+
     </style>
 </head>
 <body class="d-flex position-relative flex-column">
@@ -74,9 +98,11 @@
 <header style=" background: #0E1558 !important;" class="text-center text-white mb-3 py-2 ">
     <a href="{{url('/')}}" class="d-flex justify-content-center align-items-center">
         <img height="45" width="45" src="{{asset('images/rccg_img.png')}}">
-        <h1 class="ml-3 mb-0 bold text-white">BIBLE QUIZ PORTAL</h1>
+        <div class="ml-3">
+            <h1 class="title-text mb-0 bold text-white">BIBLE QUIZ PORTAL</h1>
+            <p class="text-white m-0">Web based quiz portal for all</p>
+        </div>
     </a>
-    <p class="text-white">Web based quiz portal for all</p>
 </header>
 
 <div class="pt-2">

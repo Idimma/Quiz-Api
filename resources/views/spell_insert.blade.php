@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('content')
-    <div class=" radius-10 ml-auto mr-auto mt-4 col-md-11 " style="min-height: 70vh">
+       <div class=" radius-10 ml-auto mr-auto mt-4 col-md-11 " style="min-height: 70vh">
         <div class="card-body">
             <div class="d-flex justify-content-between">
                 <h1>Spellings</h1>
