@@ -49,8 +49,9 @@ class ParagraphController extends Controller
     }
 
 
-    public function update(Request $request, BlankParagraph $blankParagraph)
+    public function update(Request $request, $id)
     {
+        $blankParagraph = BlankParagraph::findOrFail($id);
         $validated = $request->validate([
             'question' => 'required|string',
             'answer' => 'required|string',
@@ -65,7 +66,7 @@ class ParagraphController extends Controller
         }
 
         $blankParagraph->update($validated);
-        return redirect('/paragraphs')->with('success', 'Question created successfully');
+        return redirect('/paragraphs')->with('success', 'Question updated successfully');
     }
 
 
