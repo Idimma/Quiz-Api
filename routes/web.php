@@ -12,6 +12,7 @@
 */
 
 
+use App\Http\Controllers\QuestionsController;
 use App\Http\Controllers\QuizController;
 
 Route::get('/', [QuizController::class, 'welcome']);
@@ -30,13 +31,10 @@ Route::get('/quiz', function () {
 
 
 Route::get('/table', [QuizController::class, 'leaderBoard']);
-Route::get('/insert', function () {
-    return view('insert');
-});
-
-Route::post('/insert', function () {
-    return view('tables');
-});
+Route::get('/insert', [QuestionsController::class, 'insert']);
+Route::post('/insert', [QuestionsController::class, 'create']);
+Route::get('/insert/edit/{question}', [QuestionsController::class, 'edit']);
+Route::post('/insert/edit/{question}', [QuestionsController::class, 'update']);
 
 
 Route::get('/spell', function () {

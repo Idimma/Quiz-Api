@@ -51,4 +51,8 @@ class Question extends Model
         'class',
         'meta'
     ];
+
+    protected $casts = [
+        'meta' => 'array'
+    ];
 }
