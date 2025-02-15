@@ -18,6 +18,7 @@
             display: flex;
             flex-direction: column;
             position: relative;
+            background-color: #F4FCFF;
         }
 
         * {
@@ -107,7 +108,7 @@
 <header style=" background: #0E1558 !important;" class="text-center text-white mb-3 py-2 ">
     <a href="{{url('/')}}" class="d-flex justify-content-center align-items-center">
         <img height="45" width="45" src="{{asset('images/rccg_img.png')}}">
-        <div class="ml-3">
+        <div class="ml-3 text-left">
             <h1 class="title-text mb-0 bold text-white">BIBLE QUIZ PORTAL</h1>
             <p class="text-white m-0">Web based quiz portal for all</p>
         </div>
