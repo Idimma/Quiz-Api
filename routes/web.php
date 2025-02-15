@@ -36,6 +36,9 @@ Route::post('/insert', [QuestionsController::class, 'create']);
 Route::get('/insert/edit/{question}', [QuestionsController::class, 'edit']);
 Route::post('/insert/edit/{question}', [QuestionsController::class, 'update']);
 
+Route::resource('paragraphs', 'ParagraphController');
+
+
 
 Route::get('/spell', function () {
     return view('spell_welcome');

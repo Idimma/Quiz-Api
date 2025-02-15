@@ -120,6 +120,7 @@
 <div class="credit text-center">
     Powered by <code class="d-inline">GIDICODES</code> Copyright &copy {{now()->year}}
 </div>
+@include('partial.notify')
 <script>
 	function showLoading() {
 		document.querySelectorAll('.fade-in').forEach(element => {

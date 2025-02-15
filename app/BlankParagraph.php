@@ -7,5 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class BlankParagraph extends Model
 {
-    use HasFactory;
+
+    protected $fillable = ['question', 'answer', 'level', 'type', 'meta'];
+    protected $casts = ['meta' => 'array'];
 }

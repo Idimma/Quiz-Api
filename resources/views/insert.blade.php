@@ -56,9 +56,6 @@
                         <form action="{{ isset($question) ? url('/insert/edit/'.$question->id) : url('insert') }}"
                               method="post">
                             @csrf
-                            {{--                            @if(isset($question))--}}
-                            {{--                                @method('PUT')--}}
-                            {{--                            @endif--}}
                             @include('partial.form-area', [
                                 'name' => 'question',
                                 'label' => 'Question',
@@ -89,21 +86,6 @@
                                 'placeholder' => 'Is 60:1',
                                 'value' => old('type', isset($question) ? optional($question->meta)->bible_ref : '')
                             ])
-
-                            {{--                            @include('partial.form-control', [--}}
-                            {{--                                'name' => 'class',--}}
-                            {{--                                'label' => 'Class',--}}
-                            {{--                                'placeholder' => 'Class',--}}
-                            {{--                                'value' => old('class', isset($question) ? $question->class : '')--}}
-                            {{--                            ])--}}
-
-                            {{--                            @include('partial.form-control', [--}}
-                            {{--                                'name' => 'meta',--}}
-                            {{--                                'label' => 'Meta Information',--}}
-                            {{--                                'placeholder' => 'Meta Information',--}}
-                            {{--                                'value' => old('meta', isset($question) ? $question->meta : '')--}}
-                            {{--                            ])--}}
-
                             <div class="mt-4 d-flex justify-content-end">
                                 <button type="submit"
                                         class="btn btn-success btn-round">{{ isset($question) ? 'Update' : 'Submit' }}</button>
