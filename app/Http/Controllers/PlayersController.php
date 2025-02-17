@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\players;
+use App\Player;
 use Illuminate\Http\Request;
 
 class PlayersController extends Controller
@@ -41,10 +41,10 @@ class PlayersController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\players  $players
+     * @param  \App\Player  $players
      * @return \Illuminate\Http\Response
      */
-    public function show(players $players)
+    public function show(Player $players)
     {
         //
     }
@@ -52,10 +52,10 @@ class PlayersController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\players  $players
+     * @param  \App\Player  $players
      * @return \Illuminate\Http\Response
      */
-    public function edit(players $players)
+    public function edit(Player $players)
     {
         //
     }
@@ -64,10 +64,10 @@ class PlayersController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\players  $players
+     * @param  \App\Player  $players
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, players $players)
+    public function update(Request $request, Player $players)
     {
         //
     }
@@ -75,10 +75,10 @@ class PlayersController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\players  $players
+     * @param  \App\Player  $players
      * @return \Illuminate\Http\Response
      */
-    public function destroy(players $players)
+    public function destroy(Player $players)
     {
         //
     }

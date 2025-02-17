@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Players;
+use App\Player;
 use App\Question;
 use App\Spelling;
 use App\Student;
@@ -79,19 +79,18 @@ class QuizController extends Controller
         $validatedData['given_answers'] = json_decode($request->given_answers, true) ?? [];
         $validatedData['seconds_spread'] = json_decode($request->seconds_spread, true) ?? [];
         $validatedData['meta'] = json_decode($request->meta, true) ?? [];
-        $player = Players::create($validatedData);
+        $player = Player::create($validatedData);
         return redirect("completed/$player->id");
     }
 
-    public function completed(Players $player)
+    public function completed(Player $player)
     {
         return view('correction', $player->toArray());
     }
 
     public function leaderBoard()
     {
-        $players = Players::orderBy('percent', 'desc')->get();
-        return view('tables', ['players' => $players]);
+        return view('tables');
     }
 
 
