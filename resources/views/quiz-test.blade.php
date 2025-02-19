@@ -1,4 +1,4 @@
-@extends('layouts.master', [])
+@extends('layouts.master', ['no_header'=>true])
 @section('js')
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
@@ -56,6 +56,11 @@
             margin-top: 30px;
         }
 
+        .question-view p, .paragraph-view p {
+            color: black;
+            font-family: 'Avenir Next Medium', serif;
+        }
+
         .selector-options {
             width: 100%;
             padding: 8px 20px;
@@ -66,6 +71,7 @@
             min-height: 45px;
             justify-content: flex-start;
             gap: 10px;
+            color: rgba(0, 0, 0, 0.70);
             flex-direction: row;
             align-items: center;
         }
@@ -77,7 +83,7 @@
 @stop
 @section('content')
     <div class="mobile-content py-[22px] overflow-y-hidden">
-        <div class="flex-1 flex flex-col" id="question-panel"></div>
+        <div class="flex-1 flex flex-col overflow-y-scroll no-scrollbar" id="question-panel"></div>
     </div>
 @stop
 @section('script')
@@ -194,7 +200,7 @@
 					showFaded()
 				}, []);
 				return (
-					<div className="flex-1">
+					<div className="flex-1 overflow-y-scroll no-scrollbar">
 						<div className="relative">
 							<CircularProgress size={85} progress={progress + 1}/>
 							<div className="question-view fade-in">
@@ -225,7 +231,10 @@
 						<div className="relative">
 							<CircularProgress size={85} progress={progress + 1}/>
 							<div className="question-view">
-								<p>{question.question}</p>
+								<div className="flex-1">
+									<p className="font-medium text-[16px] text-center">{question.question}</p>
+								</div>
+								<article>{question.student_instruction}</article>
 							</div>
 						</div>
 						<textarea
@@ -373,11 +382,11 @@
 					console.log()
 					axios.post(baseUrl, params).then(({data}) => {
 						showLoading("Loading results")
-						window.location.href = "{{url('completed')}}/"+ data.id
-          }).catch(() => {
+						window.location.href = "{{url('completed')}}/" + data.id
+					}).catch(() => {
 						alert('Something went wrong')
-            hideLoading()
-          })
+						hideLoading()
+					})
 
 
 					// const params = new URLSearchParams();
@@ -386,9 +395,12 @@
 
 				const onMarkQuestion = (ans, question) => {
 					const q = QUESTIONS[progress];
-					q.given_answer = ans
-					q.second_spent = question.timer - seconds
-					QUESTIONS[progress] = q;
+					if (q) {
+
+						q.given_answer = ans
+						q.second_spent = question.timer - seconds
+						QUESTIONS[progress] = q;
+					}
 				};
 
 

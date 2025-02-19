@@ -13,6 +13,21 @@
     <link href="{{asset('css/index.css')}}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="{{asset('css/style.css')}}" type="text/css">
+    <style>
+        .form-control{
+            color: black;
+            font-family: "Avenir Next Medium", fantasy;
+            padding: 10px 20px;
+        }
+        .form-control::placeholder{
+            color: gray;
+            font-family: "Avenir Next Italic", fantasy;
+        }
+        label{
+            color: black;
+            font-family: "Avenir Next Italic", fantasy;
+        }
+    </style>
 </head>
 <body>
 <div id="loadingIndicator">

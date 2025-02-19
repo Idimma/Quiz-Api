@@ -57,9 +57,9 @@
                             <tr>
                                 <td>#{{($index ?? 0)+1}}</td>
                                 <td><span>{{$question['question'] ?? ''}}</span></td>
-                                <td><span>{{$question['expected_answer'] ?? ''}}</span></td>
-                                <td class='text-white text-start '
-                                    style="background-color: {{$question['color'] ?? ''}}">
+                                <td style="max-width: 400px" ><span>{{$question['expected_answer'] ?? ''}}</span></td>
+                                <td  class='text-white text-start '
+                                    style="max-width: 350px; background-color: {{$question['color'] ?? ''}}">
                                     <p>{{$question['given_answer'] ?? ''}}</p>
                                 </td>
                                 <td class="text-center"><span class="text-center">{{$question['second_spent'] ?? ''}} Sec</span></td>

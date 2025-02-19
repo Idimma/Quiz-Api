@@ -1,7 +1,8 @@
 @extends('layouts.master', ['no_header' => true])
 @section('content')
+
     <div class="mobile-content pt-[162px]">
-        <div class="w-full ">
+        <div class="w-full  px-3 ">
             <img src="{{asset('images/lsc.png')}}" alt="RCCG Logo" class="mx-auto"
                  style=" height: 140px"/>
             <h1 class="text-center text-[24px] mt-[20px] mb-[100px]">Welcome to Bible Quiz Portal</h1>
