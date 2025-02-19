@@ -45,7 +45,7 @@ class AIService
         ];
 
         try {
-            $response = Http::post('http://localhost:11434/api/generate', $payload);
+            $response = Http::post(env('OLLAM_LINK','http://localhost:11434/api/generate'), $payload);
 
             if ($response->successful()) {
                 $result = $response->json();
