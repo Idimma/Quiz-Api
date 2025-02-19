@@ -76,7 +76,7 @@
     </style>
 @stop
 @section('content')
-    <div class="mobile-content py-[22px] overflow-y-hidden" style="background-color: rgba(0,0,0, 0.01)">
+    <div class="mobile-content py-[22px] overflow-y-hidden">
         <div class="flex-1 flex flex-col" id="question-panel"></div>
     </div>
 @stop

@@ -76,7 +76,7 @@ body {
     display: flex;
     flex-direction: column;
     position: relative;
-    background-color: #F4FCFF;
+    background-color: rgba(71, 69, 71, 0.14);
     font-family: "Avenir Next Regular", fantasy;
     /*font-size: 20px;*/
     /*line-height: .8cm;*/
@@ -99,12 +99,16 @@ body {
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    padding: 0.25rem;
+    padding: 0;
 }
 
 .credit {
     padding: 20px 10px;
     font-size: 10px;
+    background-color: #F4FCFF;
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
     /*position: absolute;*/
     /*bottom: 0;*/
     /*right: 0;*/
@@ -181,6 +185,7 @@ body {
     display: flex;
     flex: 1;
     padding: 1rem;
+    background-color: #F4FCFF;
     max-width: 480px;
     margin: 0 auto;
 }
