@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\BlankParagraph;
 use App\Player;
 use App\Question;
+use App\Services\AIService;
 use App\Spelling;
 use App\Student;
 use Illuminate\Http\Request;
@@ -20,47 +22,55 @@ class QuizController extends Controller
         return view('create-student');
     }
 
-    public function store()
+    public function store(Request $request)
     {
-        $user = Student::create([
-            'user_id' => request()->phone,
-            'name' => request()->name,
-            'class' => request()->class,
-            'zone' => request()->zone,
-            'types' => request()->levels
+        $request->validate([
+            'phone' => 'required|string|min:11|max:11',
+            'name' => 'required|string|min:3',
         ]);
-        return view('user', ['user' => $user]);
+
+        $phone = str(request()->phone)->trim()->replace('+234', '0');
+        Student::updateOrCreate(['user_id' => $phone,], [
+            'user_id' => $phone,
+            'name' => request()->name,
+            'level' => request()->level,
+            'tiers' => [],
+            'type' => request()->type
+        ]);
+        session()->put('phone', $phone);
+        return redirect("instructions/$phone");
     }
 
-    public function quizEntry()
+
+    public function instructions(mixed $phone = '')
     {
-        $user = Student::where('user_id', request()->user_id)->first();
+        $phone = session()->get('phone', $phone);
+        $user = Student::whereUserId($phone)->first();
         if ($user) {
-            $instruction = \App\Configurations::where('age_group', $user->class)->get();
             return view('dashboard', [
                 'name' => $user->name,
                 'user_id' => $user->user_id,
-                'class' => $user->class,
-                'types' => json_decode($user->types),
-                'zone' => $user->zone,
-                'instructions' => $instruction
+                'level' => $user->level,
+                'tiers' => $user->tiers,
+                'type' => $user->type,
             ]);
         }
-        return redirect('/')->with('error', 'Student not Found');
+        return redirect('/', ['error' => 'Student not registered']);
     }
 
-    public function quiz(Request $request, Student $student)
+
+    public function quiz(Request $request, Student $student, $type = '')
     {
-        if (str(request()->type)->lower()->contains('multiple')) {
-            $questions = Question::where('type', $student->type)->inRandomOrder()->take(15)->get();
+        if (str($type)->lower()->contains('multiple')) {
+            $questions = Question::whereType($student->type)->inRandomOrder()->take(15)->get();
             return view('multiple-options', $request->merge([
                 'questions' => $questions,
                 'student' => $student
             ])->all());
         }
 
-        if (str(request()->type)->lower()->contains('blank')) {
-            $questions = BlankParagraph::where('type', $student->type)->inRandomOrder()->take(15)->get();
+        if (str($type)->lower()->contains('blank')) {
+            $questions = BlankParagraph::whereType($student->type)->inRandomOrder()->take(15)->get();
             return view('multiple-options', $request->merge([
                 'questions' => $questions,
                 'student' => $student
@@ -71,9 +81,44 @@ class QuizController extends Controller
         return view('spelling-bee', request()->merge(['spellings' => $spellings, 'student' => $student])->all());
     }
 
+    public function quizTest(Request $request, Student $student)
+    {
+        $multipleChoice = Question::whereType('bible')->inRandomOrder()->take(20)->get()
+            ->map(function ($q) {
+                $answer = $q->answer;
+                return array_merge($q->toArray(), [
+                    'question_type' => 'multiple_choice',
+                    'expected_answer' => $q->$answer,
+                    'timer' => 20,
+                    'mark' => 3
+                ]);
+            });
+
+        $spellings = Spelling::whereType('bible')->inRandomOrder()->take(2)->get()
+            ->map(fn($q) => array_merge($q->toArray(), [
+                'question_type' => 'spelling',
+                'timer' => 25,
+                'answer' => $q->word,
+                'expected_answer' => $q->word,
+                'question' => "Spell " . $q->word,
+                'mark' => 5
+            ]));
+
+        $paragraphs = BlankParagraph::whereType('bible')->inRandomOrder()->take(3)->get()->map(fn($q) => array_merge($q->toArray(), [
+            'question_type' => 'paragraph',
+            'expected_answer' => $q->answer,
+            'timer' => 60,
+            'mark' => 10
+        ]));
+
+        $questions = collect($multipleChoice)->merge($spellings)->merge($paragraphs);
+        return view('quiz-test', compact('questions', 'student'));
+    }
+
     public function process(Request $request)
     {
         $validatedData = $request->all();
+        $validatedData['percent'] = $request->get('percent', 0);
         $validatedData['questions'] = json_decode($request->questions, true) ?? [];
         $validatedData['answers'] = json_decode($request->answers, true) ?? [];
         $validatedData['given_answers'] = json_decode($request->given_answers, true) ?? [];
@@ -83,12 +128,169 @@ class QuizController extends Controller
         return redirect("completed/$player->id");
     }
 
-    public function completed(Player $player)
+    public function processQuestions(Request $request)
+    {
+        $questions = json_decode($request->questions, true) ?? [];
+
+
+        function getColor($score)
+        {
+            if ($score < 1) return '#FF0000';
+            if ($score < 20) return '#FF4500';
+            if ($score > 20 && $score < 50) return '#FFA500';
+            if ($score > 40 && $score < 60) return '#FFD700';
+            if ($score > 60 && $score < 80) return '#90EE90';
+            if ($score > 80 && $score < 90) return '#32CD32';
+            return '#008000';
+        }
+
+        foreach ($questions as $index => $question) {
+            $color = '';
+
+            $score = 0;
+            $question['ai_score'] = 0;
+
+            if (in_array($question['question_type'], ['multiple_choice', 'spelling'])) {
+                $color = '#FF0000';
+                if (str($question['answer'])->lower() == str($question['given_answer'])->lower()) {
+                    $score = $question['mark'];
+                    $color = '#008000';
+                    $question['ai_score'] = 100;
+
+                }
+            }
+            if ($question['question_type'] === 'paragraph') {
+                $que = $question['question'];
+                $answer = $question['answer'];
+                $givenAnswer = $question['given_answer'];
+
+                $mark = $question['mark'];
+                //Compare by AI
+
+                $percent = AIService::evaluate($que, $answer, $givenAnswer);
+
+                $question['ai_score'] = $percent;
+                $score = $percent < 1 ? 0 : ($percent * $mark) / 100;
+                $color = getColor($percent);
+
+            }
+
+            $question['score'] = $score;
+            $question['correct'] = $score > 0;
+            $question['color'] = $color;
+            $questions[$index] = $question;
+        }
+
+
+//        $timers = array_map(fn($q) => $q['timer'], $questions);
+
+        $usedTimer = array_map(fn($q) => $q['second_spent'], $questions);
+        $marks = array_map(fn($q) => $q['mark'], $questions);
+        $scores = array_map(fn($q) => $q['score'], $questions);
+        $score = array_sum($scores);
+        $percent = $score / array_sum($marks);
+
+
+        $data = [
+            'user_id' => $request->user_id,
+            'name' => $request->name,
+            'questions' => $questions,
+            'score' => $score,
+            'percent' => $percent,
+            'seconds_used' => array_sum($usedTimer),
+            'type' => $request->type,
+            'level' => $request->level,
+            'question_type' => 'mixed',
+        ];
+        $player = Player::create($data);
+        return redirect("completed/$player->id");
+    }
+    public function processQuestionsAi(Request $request)
+    {
+        $questions = json_decode($request->questions, true) ?? [];
+
+
+        function getColor($score)
+        {
+            if ($score < 1) return '#FF0000';
+            if ($score < 20) return '#FF4500';
+            if ($score > 20 && $score < 50) return '#FFA500';
+            if ($score > 40 && $score < 60) return '#FFD700';
+            if ($score > 60 && $score < 80) return '#90EE90';
+            if ($score > 80 && $score < 90) return '#32CD32';
+            return '#008000';
+        }
+
+        foreach ($questions as $index => $question) {
+            $color = '';
+
+            $score = 0;
+            $question['ai_score'] = 0;
+
+            if (in_array($question['question_type'], ['multiple_choice', 'spelling'])) {
+                $color = '#FF0000';
+                if (str($question['answer'])->lower() == str($question['given_answer'])->lower()) {
+                    $score = $question['mark'];
+                    $color = '#008000';
+                    $question['ai_score'] = 100;
+
+                }
+            }
+            if ($question['question_type'] === 'paragraph') {
+                $que = $question['question'];
+                $answer = $question['answer'];
+                $givenAnswer = $question['given_answer'];
+
+                $mark = $question['mark'];
+                //Compare by AI
+
+                $percent = AIService::evaluate($que, $answer, $givenAnswer);
+
+                $question['ai_score'] = $percent;
+                $score = $percent < 1 ? 0 : ($percent * $mark) / 100;
+                $color = getColor($percent);
+
+            }
+
+            $question['score'] = $score;
+            $question['correct'] = $score > 0;
+            $question['color'] = $color;
+            $questions[$index] = $question;
+        }
+
+
+//        $timers = array_map(fn($q) => $q['timer'], $questions);
+
+        $usedTimer = array_map(fn($q) => $q['second_spent'], $questions);
+        $marks = array_map(fn($q) => $q['mark'], $questions);
+        $scores = array_map(fn($q) => $q['score'], $questions);
+        $score = array_sum($scores);
+        $percent = $score / array_sum($marks);
+
+
+        $data = [
+            'user_id' => $request->user_id,
+            'name' => $request->name,
+            'questions' => $questions,
+            'score' => $score,
+            'percent' => $percent,
+            'seconds_used' => array_sum($usedTimer),
+            'type' => $request->type,
+            'level' => $request->level,
+            'question_type' => 'mixed',
+        ];
+        $player = Player::create($data);
+        return $player ; //redirect("completed/$player->id");
+    }
+
+    public
+    function completed(Player $player)
     {
         return view('correction', $player->toArray());
     }
 
-    public function leaderBoard()
+    public
+    function leaderBoard()
     {
         return view('tables');
     }

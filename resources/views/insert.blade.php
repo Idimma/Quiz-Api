@@ -1,10 +1,10 @@
 @extends('layouts.master')
 @section('content')
-    <main class="container mt-4">
-        <div class="row row-no-gutter flex-md-row-reverse">
+    <main class="max-w-[1200px] mx-auto pt-4">
+        <div class="flex px-3 gap-8 justify-center flex-md-row-reverse overflow-hidden flex-col md:flex-row" >
             <!-- Left Side: List of Questions -->
-            <div class="mb-4 col-md-5">
-                <div class="card shadow-sm rounded overflow-hidden">
+            <div class="mb-4 mx-auto w-full md:w-5/12">
+                <div class="card shadow-sm rounded">
                     <div class="card-header bg-primary text-white">
                         <h5 class="mb-0 text-white">{{ isset($question) ? 'Edit Question' : 'Create Question' }}</h5>
                     </div>
@@ -52,7 +52,7 @@
             </div>
 
             <!-- Right Side: Create/Edit Form -->
-            <div class="col-md-7 mb-4">
+            <div class="md:w-7/12 w-full mx-auto mb-4">
                 <div class="card shadow-sm rounded overflow-hidden">
                     <div class="card-header bg-primary text-white">
                         <h5 class="mb-0 text-white">Questions</h5>

@@ -28,9 +28,10 @@
                 </div>
                 <h6 class="pb-1 text-black-50">
                     Name: <span class="bold text-primary">{{$name ?? ''}},</span>, &nbsp; &nbsp;
-                    Type: {{$type??''}}, &nbsp; &nbsp;
-                    Level: {{$level??''}}, &nbsp; &nbsp;
-                    Quiz Score: {{$score.'/'.$no_questions}} &nbsp;
+                    Type: {{$type??''}}, &nbsp; | &nbsp;
+                    Level: {{$level??''}}, &nbsp; &nbsp;|  &nbsp;
+                    Quiz Score: {{$score.'/'.$mark}} &nbsp; | &nbsp;
+                    Percent: {{$percent *100 ?? ''}}% &nbsp; |  &nbsp;
                     Question Type: {{$question_type ?? ''}} &nbsp;
                 </h6>
 
@@ -46,22 +47,24 @@
                             <th scope="col">Question</th>
                             <th scope="col">Answer</th>
                             <th scope="col">Your Selection</th>
+                            <th scope="col">Seconds used</th>
+                            <th scope="col">AI Score</th>
+                            <th scope="col" class="text-center" width="130px">Points</th>
                         </tr>
                         </thead>
                         <tbody>
                         @foreach($questions as $index =>  $question)
-                            @php
-                                $expected = $answers[$index] ?? '';
-                                $given = $given_answers[$index]?? '';
-                                $isCorrect = !str($given)->lower()->contains($expected, true)
-                            @endphp
                             <tr>
                                 <td>#{{($index ?? 0)+1}}</td>
-                                <td><span>{{$question ?? ''}}</span></td>
-                                <td><span>{{$expected}}</span></td>
-                                <td class="text-white text-start {{$isCorrect ? 'bg-danger ' :'bg-success' }} ">
-                                    <p>{{$given}}</p>
+                                <td><span>{{$question['question'] ?? ''}}</span></td>
+                                <td><span>{{$question['expected_answer'] ?? ''}}</span></td>
+                                <td class='text-white text-start '
+                                    style="background-color: {{$question['color'] ?? ''}}">
+                                    <p>{{$question['given_answer'] ?? ''}}</p>
                                 </td>
+                                <td class="text-center"><span class="text-center">{{$question['second_spent'] ?? ''}} Sec</span></td>
+                                <td class="text-center"><span class="text-center">{{$question['ai_score'] ?? ''}}%</span></td>
+                                <td class="text-center"><span class="text-center">{{$question['score'] ?? ''}} Point(s) / {{$question['mark'] ?? ''}} </span></td>
                             </tr>
                         @endforeach
                         </tbody>

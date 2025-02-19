@@ -1,7 +1,7 @@
 <div class="card radius-10 ml-auto mr-auto mt-4 col-md-11 " style="min-height: 70vh">
     <div class="card-body p-lg-4 p-md-3 p-xl-5">
-        <div class="d-flex justify-content-between">
-            <h1>Leader Board</h1>
+        <div class="flex justify-between">
+            <h1 class="text-[24px]">Leader Board</h1>
             <a href="{{ url('/') }}" class="text-primary" style="font-size: 16px">
                 <span>Home</span>
             </a>
@@ -25,7 +25,7 @@
                         <td>#{{ $index + 1 }}</td>
                         <td>{{ $player->name }}</td>
                         <td>{{ $player->question_type }}</td>
-                        <td>{{ $player->score }}/{{ $player->no_questions }}</td>
+                        <td>{{ $player->score }}/{{ $player->mark }}</td>
                         <td>{{ number_format($player->percent * 100, 0) }}%</td>
                         <td>{{ $player->seconds_used }} Sec</td>
                         <td>{{ Carbon\Carbon::parse($player->created_at)->diffForHumans() }}</td>

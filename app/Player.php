@@ -2,7 +2,7 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\BroadcastsEvents;
+use App\Events\PlayerUpdated;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -53,39 +53,47 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Player extends Model
 {
-    use BroadcastsEvents;
 
     protected $fillable = [
         'user_id',
         'name',
         'questions',
-        'answers',
-        'given_answers',
         'score',
         'percent',
-        'no_questions',
         'seconds_used',
-        'seconds_allocated',
-        'seconds_expected',
-        'seconds_spread',
         'type',
         'level',
         'question_type',
-        'meta',
     ];
+
     protected $casts = [
-        'questions' => 'array',
-        'answers' => 'array',
-        'meta' => 'array',
-        'given_answers' => 'array',
-        'seconds_spread' => 'array',
+        'questions' => 'array',  // Convert longText to array (assuming it's JSON)
+        'score' => 'float',
+        'percent' => 'float',
+        'seconds_used' => 'float',
     ];
 
+    protected $appends = ['marks', 'mark', 'scores'];
 
-
-
-    protected function broadcastOn()
+    protected static function booted()
     {
-        return ['leaderboard-channel'];
+        static::created(function ($player) {
+            broadcast(new PlayerUpdated($player));
+        });
     }
+
+    public function getMarksAttribute()
+    {
+        return array_map(fn($q) => $q['mark'], $this->questions);
+    }
+
+    public function getScoresAttribute()
+    {
+        return array_map(fn($q) => $q['score'], $this->questions);
+    }
+    public function getMarkAttribute()
+    {
+        return array_sum(array_map(fn($q) => $q['mark'], $this->questions));
+    }
+
 }

@@ -163,10 +163,7 @@
 			}
 
 
-			function sayWord() {
-				if (!timeStarted) startTimer();
-				pronounWord(AUDIO_LIST[CURRENT_INDEX])
-			}
+
 
 			const formatTime = number => `0${number}`.slice(-2);
 
@@ -187,6 +184,11 @@
 					}
 				}, 1000);
 			};
+
+			function sayWord() {
+				if (!timeStarted) startTimer();
+				pronounWord(AUDIO_LIST[CURRENT_INDEX])
+			}
 
 			function pronounWord(audioContent) {
 				const audio = new Audio(`data:audio/mp3;base64,${audioContent}`);

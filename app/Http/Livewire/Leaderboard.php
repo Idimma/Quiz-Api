@@ -20,7 +20,6 @@ class Leaderboard extends Component
 
     public function render()
     {
-//        $players = Player::orderByDesc('score')->get();
 
         $players = Player::orderBy('percent', 'desc')->get();
         return view('livewire.leaderboard', compact('players'));

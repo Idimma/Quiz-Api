@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AIModelCheckerController;
+use App\Http\Controllers\QuizController;
 use Illuminate\Http\Request;
 
 /*
@@ -20,6 +21,7 @@ Route::middleware('auth:api')->get('/user', static function (Request $request) {
 
 Route::post('login', 'Auth\LoginController@login');
 Route::post('quiz', 'QuestionsController@index');
+Route::post('process-questions', [QuizController::class, 'processQuestionsAi']);
 Route::get('quiz', 'QuestionsController@index');
 Route::post('spelling', 'SpellingController@index');
 Route::get('spelling', 'SpellingController@index');

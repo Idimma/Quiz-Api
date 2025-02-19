@@ -55,4 +55,6 @@ class Question extends Model
     protected $casts = [
         'meta' => 'array'
     ];
+
+    protected $hidden = ['meta', 'e', 'class', 'updated_at', 'created_at', 'id'];
 }
