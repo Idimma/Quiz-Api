@@ -34,7 +34,6 @@
     <div class="spinner"></div>
     <div id="loadingMessage"></div>
 </div>
-
 @if(!isset($no_header))
     <header style=" background: #0E1558 !important;" class="text-center text-white py-3 ">
         <a href="{{url('/')}}" class="centered">
@@ -46,14 +45,12 @@
         </a>
     </header>
 @endif
-
-
 <main class="app-content">
     @yield('content', 'Default Content')
 </main>
-<div class="credit text-center">
-    Powered by <code class="d-inline">LSC The Bridge</code> Copyright &copy {{now()->year}}
-</div>
+{{--<div class="credit text-center">--}}
+{{--    Powered by <code class="d-inline">LSC The Bridge</code> Copyright &copy {{now()->year}}--}}
+{{--</div>--}}
 @include('partial.notify')
 <script>
 	function closeToast(target) {
@@ -91,9 +88,10 @@
 	function startQuiz(cb, sec = 100) {
 		showLoading();
 		setTimeout(() => {
+			setTimeout(cb, 200);
 			hideLoading();
 			showFaded()
-			setTimeout(cb, 600);
+			// setTimeout(cb, 600);
 
 		}, sec);
 	}

@@ -352,31 +352,11 @@
 
 
 				function onLoadSaveData() {
+
 					const _timer = question ? question.timer : 60;
 					const sec = Number(localStorage.getItem('seconds') || _timer);
-					const prog = localStorage.getItem('progress') || PROGRESS;
-					setSeconds(Number(sec));
-					setProgress(Number(prog));
-				}
+					const prog = Number(localStorage.getItem('progress') || PROGRESS);
 
-				useEffect(() => {
-					onLoadSaveData()
-					return () => stopTimer();
-				}, [])
-
-				useEffect(() => {
-					const handleBeforeUnload = (event) => {
-
-						setData("QUESTIONS", QUESTIONS);
-						setData("STUDENT", STUDENT);
-						setData("givenAnswers", givenAnswers);
-						setData("timeSpent", timeSpent);
-						localStorage.setItem("progress", progress);
-						localStorage.setItem("seconds", seconds);
-						event.preventDefault();
-						event.returnValue = "Are you sure you want to leave?";
-						return "Are you sure you want to leave?";
-					};
 					QUESTIONS = getData("QUESTIONS", QUESTIONS);
 					STUDENT = getData("STUDENT", STUDENT);
 					givenAnswers = getData("givenAnswers", givenAnswers);
@@ -391,10 +371,40 @@
 					if (timeSpent.length !== QUESTION_COUNT) {
 						timeSpent = new Array(QUESTION_COUNT).fill(0);
 					}
+					if (prog > -1) {
+						startTimer(prog)
+						setSeconds(Number(sec));
+						setProgress(prog);
+						showLoading("Restoring session")
+						onLoadNextQuestion(prog - 1)
+						showFaded()
+						hideLoading()
+					}
+				}
+
+
+				useEffect(() => {
+					const handleBeforeUnload = (event) => {
+						setData("QUESTIONS", QUESTIONS);
+						setData("STUDENT", STUDENT);
+						setData("givenAnswers", givenAnswers);
+						setData("timeSpent", timeSpent);
+						event.preventDefault();
+						event.returnValue = "Are you sure you want to leave?";
+						const prompt = confirm("Are you sure you want to leave?")
+						if (prompt) {
+							// perform event
+							return "Are you sure you want to leave?";
+						}
+						return "";
+					};
+					onLoadSaveData()
+
 
 					window.addEventListener("beforeunload", handleBeforeUnload);
 					return () => {
 						window.removeEventListener("beforeunload", handleBeforeUnload);
+						stopTimer()
 					};
 				}, []);
 
@@ -448,13 +458,10 @@
 
 				function onLoadNextQuestion(start) {
 					const next = Number(start) + 1;
-					console.log("NEXT", next)
 					if (next < QUESTION_COUNT) {
-
 						localStorage.setItem('progress', `${next}`)
-
-					 	setProgress(next)
-
+						localStorage.setItem("seconds", seconds);
+						setProgress(next)
 						startQuiz(() => {
 							const question = QUESTIONS[next];
 							setQuestion(question)
@@ -474,7 +481,6 @@
 					resetTimer()
 					const currentIndex = index != null ? index : progress;
 					const q = QUESTIONS[currentIndex];
-
 					if (q) {
 						q.given_answer = ans
 						q.second_spent = q.timer - seconds
