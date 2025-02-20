@@ -133,17 +133,6 @@ class QuizController extends Controller
         $questions = json_decode($request->questions, true) ?? [];
 
 
-        function getColor($score)
-        {
-            if ($score < 1) return '#FF0000';
-            if ($score < 20) return '#FF4500';
-            if ($score > 20 && $score < 50) return '#FFA500';
-            if ($score > 40 && $score < 60) return '#FFD700';
-            if ($score > 60 && $score < 80) return '#90EE90';
-            if ($score > 80 && $score < 90) return '#32CD32';
-            return '#008000';
-        }
-
         foreach ($questions as $index => $question) {
             $color = '';
 
@@ -171,7 +160,7 @@ class QuizController extends Controller
 
                 $question['ai_score'] = $percent;
                 $score = $percent < 1 ? 0 : ($percent * $mark) / 100;
-                $color = getColor($percent);
+                $color = AIService:: getColor($percent);
 
             }
 
@@ -205,68 +194,21 @@ class QuizController extends Controller
         $player = Player::create($data);
         return redirect("completed/$player->id");
     }
+
+
     public function processQuestionsAi(Request $request)
     {
         $questions = json_decode($request->questions, true) ?? [];
 
 
-        function getColor($score)
-        {
-            if ($score < 1) return '#FF0000';
-            if ($score < 20) return '#FF4500';
-            if ($score > 20 && $score < 50) return '#FFA500';
-            if ($score > 40 && $score < 60) return '#FFD700';
-            if ($score > 60 && $score < 80) return '#90EE90';
-            if ($score > 80 && $score < 90) return '#32CD32';
-            return '#008000';
-        }
+        $questions =  AIService::recalculate($questions); //AIService::calculateScores($questions);
 
-        foreach ($questions as $index => $question) {
-            $color = '';
-
-            $score = 0;
-            $question['ai_score'] = 0;
-
-            if (in_array($question['question_type'], ['multiple_choice', 'spelling'])) {
-                $color = '#FF0000';
-                if (str($question['answer'])->lower() == str($question['given_answer'])->lower()) {
-                    $score = $question['mark'];
-                    $color = '#008000';
-                    $question['ai_score'] = 100;
-
-                }
-            }
-            if ($question['question_type'] === 'paragraph') {
-                $que = $question['question'];
-                $answer = $question['answer'];
-                $givenAnswer = $question['given_answer'];
-
-                $mark = $question['mark'];
-                //Compare by AI
-
-                $percent = AIService::evaluate($que, $answer, $givenAnswer);
-
-                $question['ai_score'] = $percent;
-                $score = $percent < 1 ? 0 : ($percent * $mark) / 100;
-                $color = getColor($percent);
-
-            }
-
-            $question['score'] = $score;
-            $question['correct'] = $score > 0;
-            $question['color'] = $color;
-            $questions[$index] = $question;
-        }
-
-
-//        $timers = array_map(fn($q) => $q['timer'], $questions);
 
         $usedTimer = array_map(fn($q) => $q['second_spent'], $questions);
         $marks = array_map(fn($q) => $q['mark'], $questions);
         $scores = array_map(fn($q) => $q['score'], $questions);
         $score = array_sum($scores);
         $percent = $score / array_sum($marks);
-
 
         $data = [
             'user_id' => $request->user_id,
@@ -280,7 +222,7 @@ class QuizController extends Controller
             'question_type' => 'mixed',
         ];
         $player = Player::create($data);
-        return $player ; //redirect("completed/$player->id");
+        return $player; //redirect("completed/$player->id");
     }
 
     public
@@ -307,5 +249,15 @@ class QuizController extends Controller
     {
         $spellings = Spelling::get();
         return view('spell_insert', ['spellings' => $spellings]);
+    }
+
+
+    public function result(Request $request, $userId)
+    {
+        $player = Player::whereUserId($userId)->latest()->firstOrFail();
+//        $player->questions = AIService::recalculate($player->questions);
+//        $player->save();
+//        $player->refresh();
+        return view('correction', $player->toArray());
     }
 }

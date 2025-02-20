@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Events\PlayerUpdated;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -27,28 +28,28 @@ use Illuminate\Database\Eloquent\Model;
  * @property array|null $meta
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @method static \Illuminate\Database\Eloquent\Builder|Player newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Player newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Player query()
- * @method static \Illuminate\Database\Eloquent\Builder|Player whereAnswers($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Player whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Player whereGivenAnswers($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Player whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Player whereLevel($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Player whereMeta($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Player whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Player whereNoQuestions($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Player wherePercent($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Player whereQuestionType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Player whereQuestions($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Player whereScore($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Player whereSecondsAllocated($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Player whereSecondsExpected($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Player whereSecondsSpread($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Player whereSecondsUsed($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Player whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Player whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Player whereUserId($value)
+ * @method static Builder|Player newModelQuery()
+ * @method static Builder|Player newQuery()
+ * @method static Builder|Player query()
+ * @method static Builder|Player whereAnswers($value)
+ * @method static Builder|Player whereCreatedAt($value)
+ * @method static Builder|Player whereGivenAnswers($value)
+ * @method static Builder|Player whereId($value)
+ * @method static Builder|Player whereLevel($value)
+ * @method static Builder|Player whereMeta($value)
+ * @method static Builder|Player whereName($value)
+ * @method static Builder|Player whereNoQuestions($value)
+ * @method static Builder|Player wherePercent($value)
+ * @method static Builder|Player whereQuestionType($value)
+ * @method static Builder|Player whereQuestions($value)
+ * @method static Builder|Player whereScore($value)
+ * @method static Builder|Player whereSecondsAllocated($value)
+ * @method static Builder|Player whereSecondsExpected($value)
+ * @method static Builder|Player whereSecondsSpread($value)
+ * @method static Builder|Player whereSecondsUsed($value)
+ * @method static Builder|Player whereType($value)
+ * @method static Builder|Player whereUpdatedAt($value)
+ * @method static Builder|Player whereUserId($value)
  * @mixin \Eloquent
  */
 class Player extends Model
@@ -64,6 +65,7 @@ class Player extends Model
         'type',
         'level',
         'question_type',
+        'ai_marked',
     ];
 
     protected $casts = [
@@ -71,6 +73,7 @@ class Player extends Model
         'score' => 'float',
         'percent' => 'float',
         'seconds_used' => 'float',
+        'ai_marked' => 'boolean',
     ];
 
     protected $appends = ['marks', 'mark', 'scores'];
@@ -80,20 +83,24 @@ class Player extends Model
         static::created(function ($player) {
             broadcast(new PlayerUpdated($player));
         });
+        static::updated(function ($player) {
+            broadcast(new PlayerUpdated($player));
+        });
     }
 
     public function getMarksAttribute()
     {
-        return array_map(fn($q) => $q['mark'], $this->questions);
+        return array_map(fn($q) => $q['mark'], $this->questions ?? []);
     }
 
     public function getScoresAttribute()
     {
-        return array_map(fn($q) => $q['score'], $this->questions);
+        return array_map(fn($q) => $q['score'], $this->questions ?? []);
     }
+
     public function getMarkAttribute()
     {
-        return array_sum(array_map(fn($q) => $q['mark'], $this->questions));
+        return array_sum(array_map(fn($q) => $q['mark'], $this->questions ?? []));
     }
 
 }

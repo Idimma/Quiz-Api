@@ -29,6 +29,9 @@ Route::any('/quiz/{student:user_id}/{type}', [QuizController::class, 'quiz']);
 Route::get('/process', [QuizController::class, 'process']);
 Route::get('/process-questions', [QuizController::class, 'processQuestions']);
 Route::get('/completed/{player}', [QuizController::class, 'completed']);
+Route::get('/result/{student:user_id}', [QuizController::class, 'result']);
+
+
 Route::get('/quiz', fn() => redirect('/'));
 Route::get('/table', [QuizController::class, 'leaderBoard']);
 Route::get('/insert', [QuestionsController::class, 'insert']);

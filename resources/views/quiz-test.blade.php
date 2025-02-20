@@ -88,17 +88,24 @@
 @stop
 @section('script')
     <script type="text/babel">
-			const QUESTIONS = {!! $questions !!};
-			const STUDENT = {!! $student !!};
-			const maxSec = 60;
+			const setData = (key, value) => localStorage.setItem(key, JSON.stringify(value));
 
-			const TOTAL_TIME = QUESTIONS.reduce((p, c) => p + c.timer, 0);
-			const ANSWERS = QUESTIONS.map(w => w.answer);
-			const QUESTION_COUNT = QUESTIONS.length
-			const givenAnswers = new Array(QUESTION_COUNT).fill("");
-			const timeSpent = new Array(QUESTION_COUNT).fill(0);
+			function getData(key, _default = null) {
+				const data = localStorage.getItem(key);
+				return data ? JSON.parse(data) : _default;
+			}
+
+			const removeData = key => localStorage.removeItem(key);
+
+			let QUESTIONS = {!! $questions !!};
+			let STUDENT = {!! $student !!};
+
+			let TOTAL_TIME = QUESTIONS.reduce((p, c) => p + c.timer, 0);
+			let QUESTION_COUNT = QUESTIONS.length
+			let givenAnswers = new Array(QUESTION_COUNT).fill("");
+			let timeSpent = new Array(QUESTION_COUNT).fill(0);
 			let score = 0;
-
+			let PROGRESS = -1;
 
 			const {useState, useEffect, useRef, forwardRef} = React
 
@@ -148,7 +155,6 @@
 					</div>
 				);
 			};
-
 
 			const CircularProgress = ({size = 120, progress = 0, strokeWidth = 7}) => {
 				const radius = (size - strokeWidth) / 2; // Adjust for stroke width
@@ -223,7 +229,6 @@
 				)
 			}
 
-
 			const Paragraph = ({progress, onDone, question}) => {
 				const [answer, setAnswer] = React.useState('');
 				return (
@@ -254,7 +259,6 @@
 					</div>
 				)
 			}
-
 
 			const Spelling = ({progress, audio, onDone, onStartTimer}) => {
 				const [answer, setAnswer] = React.useState('');
@@ -301,15 +305,12 @@
 
 
 			function App() {
-				const [progress, setProgress] = React.useState(-1);
-
 				const [question, setQuestion] = useState(null)
-
 				const [type, setType] = useState('')
-
-				const [seconds, setSeconds] = useState(maxSec);
+				const [render, setRender] = useState('')
+				const [progress, setProgress] = React.useState(PROGRESS);
+				const [seconds, setSeconds] = useState(60);
 				const intervalRef = useRef(null);
-				const timerHasStarted = intervalRef && intervalRef.current
 
 
 				const formatTime = (totalSeconds) => {
@@ -321,23 +322,23 @@
 					.join(":");
 				};
 
-				const startTimer = () => {
+				const startTimer = (index = null) => {
 					if (intervalRef.current) return; // Prevent multiple intervals
 					intervalRef.current = setInterval(() => {
 						setSeconds((prev) => {
 							if (prev <= 1) {
-								stopTimer();
-								onAnswer('')
-								resetTimer()
+								onAnswer('', index)
 								return 0;
 							}
-							return prev - 1;
+							const sec = prev - 1;
+							localStorage.setItem("seconds", `${sec}`);
+							return sec;
 						});
 					}, 1000);
 				};
 
 				const stopTimer = () => {
-					if (intervalRef.current) {
+					if (intervalRef && intervalRef.current) {
 						clearInterval(intervalRef.current);
 						intervalRef.current = null;
 					}
@@ -345,24 +346,79 @@
 
 				const resetTimer = () => {
 					stopTimer();
+					localStorage.removeItem("seconds");
 					setSeconds(question ? question.timer : 0);
 				};
 
 
+				function onLoadSaveData() {
+					const _timer = question ? question.timer : 60;
+					const sec = Number(localStorage.getItem('seconds') || _timer);
+					const prog = localStorage.getItem('progress') || PROGRESS;
+					setSeconds(Number(sec));
+					setProgress(Number(prog));
+				}
+
 				useEffect(() => {
-
-
+					onLoadSaveData()
 					return () => stopTimer();
 				}, [])
 
+				useEffect(() => {
+					const handleBeforeUnload = (event) => {
+
+						setData("QUESTIONS", QUESTIONS);
+						setData("STUDENT", STUDENT);
+						setData("givenAnswers", givenAnswers);
+						setData("timeSpent", timeSpent);
+						localStorage.setItem("progress", progress);
+						localStorage.setItem("seconds", seconds);
+						event.preventDefault();
+						event.returnValue = "Are you sure you want to leave?";
+						return "Are you sure you want to leave?";
+					};
+					QUESTIONS = getData("QUESTIONS", QUESTIONS);
+					STUDENT = getData("STUDENT", STUDENT);
+					givenAnswers = getData("givenAnswers", givenAnswers);
+					timeSpent = getData("timeSpent", timeSpent);
+					if (QUESTIONS) {
+						QUESTION_COUNT = QUESTIONS.length;
+						TOTAL_TIME = QUESTIONS.reduce((p, c) => p + c.timer, 0);
+					}
+					if (givenAnswers.length !== QUESTION_COUNT) {
+						givenAnswers = new Array(QUESTION_COUNT).fill("");
+					}
+					if (timeSpent.length !== QUESTION_COUNT) {
+						timeSpent = new Array(QUESTION_COUNT).fill(0);
+					}
+
+					window.addEventListener("beforeunload", handleBeforeUnload);
+					return () => {
+						window.removeEventListener("beforeunload", handleBeforeUnload);
+					};
+				}, []);
+
+
+				const showResult = () => {
+					showLoading("Opening results")
+					window.location.href = `{{url('result')}}/{{ $student->user_id }}`
+				}
+
+				function onResetData() {
+					removeData("QUESTIONS");
+					removeData("STUDENT");
+					removeData("givenAnswers");
+					removeData("timeSpent");
+					removeData("seconds");
+					removeData("progress");
+				}
 
 				const stopQuestions = () => {
 					setType('')
 					setQuestion(null)
 					showLoading("Calculating scores")
 					const baseUrl = "{{ url('api/process-questions') }}";
-
-
+					// TODO save data
 					const params = {
 						questions: JSON.stringify(QUESTIONS.map(w => {
 							delete w.audio;
@@ -378,59 +434,84 @@
 						user_id: "{{ $student->user_id }}",
 						question_type: 'mixed',
 					}
-
-					console.log()
 					axios.post(baseUrl, params).then(({data}) => {
 						showLoading("Loading results")
-						window.location.href = "{{url('completed')}}/" + data.id
+						hideLoading();
+						setRender('success')
+						onResetData()
 					}).catch(() => {
-						alert('Something went wrong')
-						hideLoading()
+						hideLoading();
+						setRender('retry')
 					})
-
-
-					// const params = new URLSearchParams();
 				};
 
 
-				const onMarkQuestion = (ans, question) => {
-					const q = QUESTIONS[progress];
-					if (q) {
-
-						q.given_answer = ans
-						q.second_spent = question.timer - seconds
-						QUESTIONS[progress] = q;
-					}
-				};
-
-
-				function onLoadNextQuestion() {
-					const next = progress + 1;
+				function onLoadNextQuestion(start) {
+					const next = Number(start) + 1;
+					console.log("NEXT", next)
 					if (next < QUESTION_COUNT) {
+
+						localStorage.setItem('progress', `${next}`)
+
+					 	setProgress(next)
+
 						startQuiz(() => {
-							setProgress(next)
 							const question = QUESTIONS[next];
 							setQuestion(question)
 							setSeconds(question.timer)
 							const type = String(question.question_type);
 							setType(question.question_type)
 							if (type.includes('multiple') || type.includes('paragraph')) {
-								startTimer()
+								startTimer(next)
 							}
-						}, 1000)
+						}, 800)
 						return
 					}
 					stopQuestions()
 				}
 
-				const onAnswer = (ans) => {
-					//STOP TIME
+				const onAnswer = (ans, index = null) => {
 					resetTimer()
-					//MARK QUESTION
-					onMarkQuestion(ans, question)
-					//LOAD NEXT QUESTION
-					onLoadNextQuestion()
+					const currentIndex = index != null ? index : progress;
+					const q = QUESTIONS[currentIndex];
 
+					if (q) {
+						q.given_answer = ans
+						q.second_spent = q.timer - seconds
+						QUESTIONS[currentIndex] = q;
+					}
+					onLoadNextQuestion(currentIndex)
+				}
+
+				if (render === 'success') {
+					return (
+						<div className="flex-1 flex flex-col centered relative">
+							<div className="mb-[80px] centered px-5 flex-col ">
+								<img src="{{asset("/images/success.png")}}" alt="Completed"/>
+								<p className="text-black font-medium text-[16px] text-center">Thank you for taking the test, you can now
+									view your result</p>
+							</div>
+							<button type="button" onClick={showResult} className="btn btn-round btn-primary">
+								View Results
+							</button>
+						</div>
+					)
+				}
+
+				if (render === 'retry') {
+					return (
+						<div className="flex-1 flex flex-col centered relative">
+							<div className="mb-[80px] centered px-5 flex-col ">
+								<img src="{{asset("/images/error.png")}}" alt="Completed"/>
+								<p className="text-black font-medium text-[16px] text-center">
+									Could not process your request, please try again later
+								</p>
+							</div>
+							<button type="button" onClick={stopQuestions} className="btn btn-round btn-primary">
+								Retry
+							</button>
+						</div>
+					)
 				}
 				return (
 					<div className="flex-1 flex flex-col relative">
@@ -444,18 +525,20 @@
 							</div>
 						</div>
 						{type.includes('multiple') &&
-							<MultipleChoice question={question ? question : {}} progress={progress} onDone={onAnswer}/>}
+							<MultipleChoice question={question ? question : {}} progress={progress}
+							                onDone={(a) => onAnswer(a, progress)}/>}
 						{type.includes('paragraph') &&
-							<Paragraph question={question ? question : {}} progress={progress} onDone={onAnswer}/>}
+							<Paragraph question={question ? question : {}} progress={progress}
+							           onDone={(a) => onAnswer(a, progress)}/>}
 						{type.includes('spelling') &&
 							<Spelling audio={question ? question.audio : ''} onStartTimer={startTimer} progress={progress}
-							          onDone={onAnswer}/>}
+							          onDone={(a) => onAnswer(a, progress)}/>}
 
 						<div hidden={progress > -1}
 						     className="flex inset-0 gap-[20px] absolute bg-white bg-opacity-50 rounded-lg justify-center items-center flex-col">
 							<h1 className="text-[24px] ">Are you ready?</h1>
-							<button onClick={onLoadNextQuestion} className="btn-primary btn text-white btn-round ">
-								YES, I AM READY
+							<button onClick={() => onLoadNextQuestion(+progress)} className="btn-primary btn text-white btn-round ">
+								YES, I AM READY !!!
 							</button>
 						</div>
 

@@ -256,12 +256,6 @@ body {
     font-size: 20px;
 }
 
-.bodily {
-    background-image: url("/images/NYSC-LOGO.png");
-    background-color: #147119;
-
-}
-
 #dialogbox > div > #dialogboxhead {
     background: #a6a6a6;
     font-size: 19px;
@@ -451,14 +445,15 @@ a.btn.disabled, fieldset:disabled a.btn {
 
 .btn-primary {
     color: #fff;
-    background-color: #007bff;
-    border-color: #007bff
+    padding: 10px 20px !important;
+    background-color: #14AAE0 !important;
+    border-color: #14AAE0 !important;
 }
 
 .btn-primary:hover {
     color: #fff;
-    background-color: #0069d9;
-    border-color: #0062cc
+    background-color: #14AAE0;
+    border-color: #14AAE0
 }
 
 .btn-primary.focus, .btn-primary:focus {
@@ -467,18 +462,18 @@ a.btn.disabled, fieldset:disabled a.btn {
 
 .btn-primary.disabled, .btn-primary:disabled {
     color: #fff;
-    background-color: #007bff;
-    border-color: #007bff
+    background-color: #083e59 !important;
+    border-color: #0c779c
 }
 
 .btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active, .show > .btn-primary.dropdown-toggle {
     color: #fff;
-    background-color: #0062cc;
-    border-color: #005cbf
+    background-color: #14AAE0;
+    border-color: #0c779c
 }
 
 .btn-primary:not(:disabled):not(.disabled).active:focus, .btn-primary:not(:disabled):not(.disabled):active:focus, .show > .btn-primary.dropdown-toggle:focus {
-    box-shadow: 0 0 0 .2rem rgba(38, 143, 255, .5)
+    box-shadow: 0 0 0 .2rem rgba(20, 170, 224, 0.75)
 }
 
 .btn-secondary {
@@ -1580,7 +1575,7 @@ select.form-control:focus::-ms-value {
 }
 
 .form-control:focus {
-    border-color: #8e54e9;
+    border-color: #2980b9!important;
     box-shadow: none
 }
 
@@ -1835,4 +1830,18 @@ label, legend {
 .no-scrollbar {
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+.centered {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.font-medium {
+   font-family: "Avenir Next Medium", fantasy;
+}
+.font-bold {
+   font-family: "Avenir Next Bold", fantasy;
 }
