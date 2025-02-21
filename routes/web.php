@@ -21,7 +21,7 @@ Route::get('/instructions/{phone}', [QuizController::class, 'instructions']);
 Route::post('/create', [QuizController::class, 'store']);
 Route::any('/quiz-test/{student:user_id}', [QuizController::class, 'quizTest']);
 
-
+Route::get('logs', [\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'index']);
 
 Route::post('/quiz', [QuizController::class, 'quiz']);
 Route::any('/quiz/{student:user_id}', [QuizController::class, 'quiz']);
