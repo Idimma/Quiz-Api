@@ -2,9 +2,8 @@
 
 namespace App\Http\Livewire;
 
-use Livewire\Component;
 use App\Player;
-use Carbon\Carbon;
+use Livewire\Component;
 use Livewire\WithPagination;
 
 class Leaderboard extends Component
@@ -12,16 +11,25 @@ class Leaderboard extends Component
     use WithPagination;
 
     protected $listeners = ['playerUpdated' => 'refreshPlayers'];
+    public $players = [];
 
     public function refreshPlayers()
     {
         $this->emitSelf('refreshComponent');
     }
 
+    public function mount()
+    {
+        $this->updateLeaderboard();
+    }
+
+    public function updateLeaderboard()
+    {
+        $this->players = Player::orderBy('percent', 'desc')->get();
+    }
+
     public function render()
     {
-
-        $players = Player::orderBy('percent', 'desc')->get();
-        return view('livewire.leaderboard', compact('players'));
+        return view('livewire.leaderboard');
     }
 }

@@ -19,7 +19,7 @@
                     <th scope="col">Time</th>
                 </tr>
                 </thead>
-                <tbody wire:poll.5s>
+                <tbody >
                 @foreach($players as $index => $player)
                     <tr>
                         <td>#{{ $index + 1 }}</td>
@@ -33,6 +33,7 @@
                 @endforeach
                 </tbody>
             </table>
+            <div wire:poll.5s="updateLeaderboard"></div>
         </div>
     </div>
 </div>

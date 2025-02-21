@@ -2,7 +2,7 @@
 
 namespace App;
 
-use App\Events\PlayerUpdated;
+//use App\Events\PlayerUpdated;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -80,12 +80,12 @@ class Player extends Model
 
     protected static function booted()
     {
-        static::created(function ($player) {
-            broadcast(new PlayerUpdated($player));
-        });
-        static::updated(function ($player) {
-            broadcast(new PlayerUpdated($player));
-        });
+//        static::created(function ($player) {
+//            broadcast(new PlayerUpdated($player));
+//        });
+//        static::updated(function ($player) {
+//            broadcast(new PlayerUpdated($player));
+//        });
     }
 
     public function getMarksAttribute()
