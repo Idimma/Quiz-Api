@@ -104,12 +104,13 @@ class QuizController extends Controller
                 'mark' => 5
             ]));
 
-        $paragraphs = BlankParagraph::whereType('bible')->inRandomOrder()->take(3)->get()->map(fn($q) => array_merge($q->toArray(), [
-            'question_type' => 'paragraph',
-            'expected_answer' => $q->answer,
-            'timer' => 60,
-            'mark' => 10
-        ]));
+        $paragraphs = BlankParagraph::whereType('bible')->inRandomOrder()->take(3)->get()
+            ->map(fn($q) => array_merge($q->toArray(), [
+                'question_type' => 'paragraph',
+                'expected_answer' => $q->answer,
+                'timer' => 60,
+                'mark' => 10
+            ]));
 
         $questions = collect($multipleChoice)->merge($spellings)->merge($paragraphs);
         return view('quiz-test', compact('questions', 'student'));
