@@ -1,12 +1,12 @@
 @extends('layouts.master', ['no_header' => true])
 @section('content')
-    <div class="mobile-content py-[22px] overflow-y-hidden">
-        <img src="{{asset('images/lsc.png')}}" alt="RCCG Logo" class="mx-auto" style=" height: 140px"/>
+    <div class="mobile-content  ">
+        <img src="{{asset('images/lsc.png')}}" alt="RCCG Logo" class="mx-auto" style=" height: 140px; margin-top: 60px"/>
         <h1 class="text-center text-[24px] mt-[20px] mb-[10px]">
             Welcome <span class="bold text-primary">{{$name ?? ''}},</span>
         </h1>
 
-        <div class="instructions-container ">
+        <div class="instructions-container px-4">
             <h3 class="bold">Instructions:</h3>
             <p>
                 Please read these instructions carefully before starting the quiz.
@@ -68,7 +68,7 @@
 {{--        </div>--}}
 
         <form action="{{ url('quiz-test/' . $user_id) }}" method="GET" >
-            <div class="flex pt-4 gap-3 items-center flex-col">
+            <div class="flex centered pt-4 gap-3 w-100 flex-col " >
                 <label class="flex text-[13px] text-black-50 items-center gap-2">
                     <input type="checkbox" id="confirmCheckbox" class="form-checkbox">
                     <span >I have read the instructions and I am clear on all</span>

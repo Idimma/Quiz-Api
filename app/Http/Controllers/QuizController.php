@@ -83,7 +83,7 @@ class QuizController extends Controller
 
     public function quizTest(Request $request, Student $student)
     {
-        $multipleChoice = Question::whereType('bible')->inRandomOrder()->take(20)->get()
+        $multipleChoice = Question::whereType('bible')->inRandomOrder()->take(0)->get()
             ->map(function ($q) {
                 $answer = $q->answer;
                 return array_merge($q->toArray(), [
@@ -199,13 +199,10 @@ class QuizController extends Controller
     public function processQuestionsAi(Request $request)
     {
         $questions = json_decode($request->questions, true) ?? [];
-
-        logs()->info('questions', $questions);
         $questions = AIService::calculateScores($questions);
-
-        $usedTimer = array_map(fn($q) => $q['second_spent'], $questions);
-        $marks = array_map(fn($q) => $q['mark'], $questions);
-        $scores = array_map(fn($q) => $q['score'], $questions);
+        $usedTimer = array_map(fn($q) => $q['second_spent'] ?? $q['timer'] ?? 20, $questions);
+        $marks = array_map(fn($q) => $q['mark'] ?? 0, $questions);
+        $scores = array_map(fn($q) => $q['score'] ?? 0, $questions);
         $score = array_sum($scores);
         $percent = $score / array_sum($marks);
 
@@ -221,6 +218,33 @@ class QuizController extends Controller
             'question_type' => 'mixed',
         ];
         $player = Player::create($data);
+
+        try {
+            if (!$player->ai_marked) {
+                $player->questions = AIService::recalculate($player->questions);
+                $questions = $player->questions;
+                $usedTimer = array_map(fn($q) => $q['second_spent'], $questions);
+                $marks = array_map(fn($q) => $q['mark'], $questions);
+                $scores = array_map(fn($q) => $q['score'], $questions);
+                $score = array_sum($scores);
+                $percent = $score / array_sum($marks);
+                $data = [
+                    'questions' => $questions,
+                    'score' => $score,
+                    'percent' => $percent,
+                    'seconds_used' => array_sum($usedTimer),
+                    'question_type' => 'mixed',
+                ];
+                $player->update($data);
+                $player->ai_marked = true;
+                $player->save();
+                $player->refresh();
+            }
+        }catch(\Exception $e){
+            logs()->error("AI ERROR ". $e->getMessage());
+        }
+
+
         return $player; //redirect("completed/$player->id");
     }
 
@@ -254,10 +278,11 @@ class QuizController extends Controller
     public function result(Request $request, $userId)
     {
         $player = Player::whereUserId($userId)->latest()->firstOrFail();
+
         if (!$player->ai_marked) {
             $player->questions = AIService::recalculate($player->questions);
             $questions = $player->questions;
-            $usedTimer = array_map(fn($q) => $q['second_spent'], $questions);
+            $usedTimer = array_map(fn($q) => $q['second_spent'] ?? $q['timer'] ?? 20, $questions);
             $marks = array_map(fn($q) => $q['mark'], $questions);
             $scores = array_map(fn($q) => $q['score'], $questions);
             $score = array_sum($scores);
@@ -270,6 +295,8 @@ class QuizController extends Controller
                 'question_type' => 'mixed',
             ];
             $player->update($data);
+            $player->ai_marked = true;
+            $player->save();
             $player->refresh();
         }
         return view('correction', $player->toArray());

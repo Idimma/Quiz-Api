@@ -169,11 +169,16 @@ class AIService
 
             if (in_array($question['question_type'], ['multiple_choice', 'spelling'])) {
                 $color = '#FF0000';
-                if (str($question['expected_answer'])->lower()->trim()->toString() == str($question['given_answer'])->trim()->lower()->toString()) {
+                try {
+                    $s = $question['given_answer'];
+                }catch(\Exception $exception){
+                    logs()->info("missing coloumn", $question);
+                }
+
+                if (str($question['expected_answer']??'')->lower()->trim()->toString() == str($question['given_answer']??'')->trim()->lower()->toString()) {
                     $score = $question['mark'];
                     $color = AIService::getColor(100);
                     $question['ai_score'] = 100;
-
                 }
             }
 
@@ -205,7 +210,7 @@ class AIService
 
 
                 $color = '#FF0000';
-                if (str($question['expected_answer'])->lower()->trim()->toString() == str($question['given_answer'])->trim()->lower()->toString()) {
+                if (str($question['expected_answer']??'')->lower()->trim()->toString() == str($question['given_answer'] ??'')->trim()->lower()->toString()) {
                     $score = $question['mark'];
                     $color = AIService::getColor(100);
                     $question['ai_score'] = 100;

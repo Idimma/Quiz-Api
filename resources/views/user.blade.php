@@ -12,7 +12,7 @@
 </head>
 <body class="d-flex  flex-column">
 
-<header style=" background: #0E1558 !important;" class="text-center text-white mb-3 py-2 ">
+<header style=" background:#14AAE0 !important;" class="text-center text-white mb-3 py-2 ">
     <div class="d-flex justify-content-center align-items-center">
         <img height="45" width="45" src="{{asset('images/rccg_img.png')}}">
         <h1 class="ml-3 bold text-white">BIBLE QUIZ PORTAL</h1>

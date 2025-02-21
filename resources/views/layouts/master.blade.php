@@ -7,7 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <link rel="shortcut icon" href="{{asset('images/rccg_img.png')}}">
     <script src="https://cdn.tailwindcss.com"></script>
-{{--    <script src={{asset('js/app.js')}}"></script>--}}
     <title>Quiz Portal</title>
     @yield('js')
     <link href="{{asset('css/index.css')}}" rel="stylesheet">

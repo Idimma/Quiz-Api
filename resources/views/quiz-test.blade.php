@@ -44,7 +44,7 @@
         }
 
         .paragraph-view {
-            box-shadow: 0 20px 50px -10px #00000026;
+            box-shadow: 0 3px 10px -10px #00000026;
             background: #FFFFFF;
             width: 100%;
             min-height: 229px;
@@ -82,28 +82,23 @@
     </style>
 @stop
 @section('content')
-    <div class="mobile-content py-[22px] overflow-y-hidden">
-        <div class="flex-1 flex flex-col overflow-y-scroll no-scrollbar" id="question-panel"></div>
+    <div class="mobile-content py-[22px] no-scrollbar">
+        <div class="flex-1 flex flex-col" id="question-panel"></div>
     </div>
 @stop
 @section('script')
     <script type="text/babel">
 			const setData = (key, value) => localStorage.setItem(key, JSON.stringify(value));
-
 			function getData(key, _default = null) {
 				const data = localStorage.getItem(key);
 				return data ? JSON.parse(data) : _default;
 			}
-
 			const removeData = key => localStorage.removeItem(key);
 
 			let QUESTIONS = {!! $questions !!};
 			let STUDENT = {!! $student !!};
 
-			let TOTAL_TIME = QUESTIONS.reduce((p, c) => p + c.timer, 0);
 			let QUESTION_COUNT = QUESTIONS.length
-			let givenAnswers = new Array(QUESTION_COUNT).fill("");
-			let timeSpent = new Array(QUESTION_COUNT).fill(0);
 			let score = 0;
 			let PROGRESS = -1;
 
@@ -232,7 +227,7 @@
 			const Paragraph = ({progress, onDone, question}) => {
 				const [answer, setAnswer] = React.useState('');
 				return (
-					<div className="flex-1 gap-[20px] overflow-y-auto">
+					<div className="gap-[20px] relative">
 						<div className="relative">
 							<CircularProgress size={85} progress={progress + 1}/>
 							<div className="question-view">
@@ -264,8 +259,8 @@
 				const [answer, setAnswer] = React.useState('');
 
 				const sayWord = () => {
-					onStartTimer();
 					new Audio(`data:audio/mp3;base64,${audio}`).play();
+					onStartTimer();
 				};
 
 
@@ -302,7 +297,6 @@
 					</div>
 				)
 			}
-
 
 			function App() {
 				const [question, setQuestion] = useState(null)
@@ -352,61 +346,39 @@
 
 
 				function onLoadSaveData() {
-
-					const _timer = question ? question.timer : 60;
-					const sec = Number(localStorage.getItem('seconds') || _timer);
-					const prog = Number(localStorage.getItem('progress') || PROGRESS);
-
-					QUESTIONS = getData("QUESTIONS", QUESTIONS);
-					STUDENT = getData("STUDENT", STUDENT);
-					givenAnswers = getData("givenAnswers", givenAnswers);
-					timeSpent = getData("timeSpent", timeSpent);
-					if (QUESTIONS) {
-						QUESTION_COUNT = QUESTIONS.length;
-						TOTAL_TIME = QUESTIONS.reduce((p, c) => p + c.timer, 0);
-					}
-					if (givenAnswers.length !== QUESTION_COUNT) {
-						givenAnswers = new Array(QUESTION_COUNT).fill("");
-					}
-					if (timeSpent.length !== QUESTION_COUNT) {
-						timeSpent = new Array(QUESTION_COUNT).fill(0);
-					}
-					if (prog > -1) {
-						startTimer(prog)
-						setSeconds(Number(sec));
-						setProgress(prog);
-						showLoading("Restoring session")
-						onLoadNextQuestion(prog - 1)
-						showFaded()
-						hideLoading()
-					}
+// 					const _timer = question ? question.timer : 60;
+// 					const sec = Number(localStorage.getItem('seconds') || _timer);
+// 					const prog = Number(localStorage.getItem('progress') || PROGRESS);
+//
+// 					QUESTIONS = getData("QUESTIONS", QUESTIONS);
+// 					STUDENT = getData("STUDENT", STUDENT);
+//                      if (QUESTIONS) QUESTION_COUNT = QUESTIONS.length;
+//
+// 					if (prog > -1) {
+// 						startTimer(prog)
+// 						setSeconds(Number(sec));
+// 						setProgress(prog);
+// 						showLoading("Restoring session")
+// 						onLoadNextQuestion(prog - 1)
+// 						showFaded()
+// 						hideLoading()
+// 					}
 				}
 
 
-				useEffect(() => {
-					const handleBeforeUnload = (event) => {
-						setData("QUESTIONS", QUESTIONS);
-						setData("STUDENT", STUDENT);
-						setData("givenAnswers", givenAnswers);
-						setData("timeSpent", timeSpent);
-						event.preventDefault();
-						event.returnValue = "Are you sure you want to leave?";
-						const prompt = confirm("Are you sure you want to leave?")
-						if (prompt) {
-							// perform event
-							return "Are you sure you want to leave?";
-						}
-						return "";
-					};
-					onLoadSaveData()
-
-
-					window.addEventListener("beforeunload", handleBeforeUnload);
-					return () => {
-						window.removeEventListener("beforeunload", handleBeforeUnload);
-						stopTimer()
-					};
-				}, []);
+// 				useEffect(() => {
+// 					const handleBeforeUnload = (event) => {
+// 						setData("QUESTIONS", QUESTIONS);
+// 						setData("STUDENT", STUDENT);
+// 					};
+// 					onLoadSaveData()
+//
+// 					window.addEventListener("beforeunload", handleBeforeUnload);
+// 					return () => {
+// 						window.removeEventListener("beforeunload", handleBeforeUnload);
+// 						stopTimer()
+// 					};
+// 				}, []);
 
 
 				const showResult = () => {
@@ -415,12 +387,10 @@
 				}
 
 				function onResetData() {
-					removeData("QUESTIONS");
-					removeData("STUDENT");
-					removeData("givenAnswers");
-					removeData("timeSpent");
-					removeData("seconds");
-					removeData("progress");
+// 					removeData("QUESTIONS");
+// 					removeData("STUDENT");
+// 					removeData("seconds");
+// 					removeData("progress");
 				}
 
 				const stopQuestions = () => {
@@ -508,8 +478,8 @@
 					return (
 						<div className="flex-1 flex flex-col centered relative">
 							<div className="mb-[80px] centered px-5 flex-col ">
-								<img src="{{asset("/images/error.png")}}" alt="Completed"/>
-								<p className="text-black font-medium text-[16px] text-center">
+								<img src="{{asset("/images/error.png")}}" width="180px" alt="Completed"/>
+								<p className="text-black font-medium text-[16px] mt-3 text-center">
 									Could not process your request, please try again later
 								</p>
 							</div>
@@ -551,7 +521,6 @@
 					</div>
 				);
 			}
-
 
 			ReactDOM.createRoot(document.getElementById("question-panel")).render(<App/>);
     </script>

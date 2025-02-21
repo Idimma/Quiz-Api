@@ -26,7 +26,7 @@
                 <div class="form-group">
                     <label for="name">Student Name <span
                                 style="font-size: 70%; font-style: italic">(Surname First)</span></label>
-                    <input required id="name" placeholder="Oyewunmi Oluwafemi" name="name" class="form-control">
+                    <input required id="name" placeholder="E.g: Oyewunmi Oluwafemi" name="name" class="form-control">
                 </div>
                 <div class="form-group">
                     <label for="name">Phone number</label>
