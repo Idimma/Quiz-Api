@@ -83,7 +83,7 @@ class QuizController extends Controller
 
     public function quizTest(Request $request, Student $student)
     {
-        $multipleChoice = Question::whereType('bible')->inRandomOrder()->take(0)->get()
+        $multipleChoice = Question::whereType('bible')->inRandomOrder()->take(20)->get()
             ->map(function ($q) {
                 $answer = $q->answer;
                 return array_merge($q->toArray(), [
