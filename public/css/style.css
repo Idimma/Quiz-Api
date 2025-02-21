@@ -184,10 +184,10 @@ body {
     flex-direction: column;
     display: flex;
     flex: 1;
-    padding: 1rem;
     background-color: #F4FCFF;
     max-width: 480px;
     margin: 0 auto;
+    padding: 1rem 1rem 150px;
 }
 
 .form-group {
