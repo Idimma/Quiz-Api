@@ -200,9 +200,8 @@ class QuizController extends Controller
     {
         $questions = json_decode($request->questions, true) ?? [];
 
-
+        logs()->info('questions', $questions);
         $questions = AIService::calculateScores($questions);
-
 
         $usedTimer = array_map(fn($q) => $q['second_spent'], $questions);
         $marks = array_map(fn($q) => $q['mark'], $questions);
