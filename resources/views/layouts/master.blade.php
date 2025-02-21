@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="author" content="Gidicodes">
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <link rel="shortcut icon" href="{{asset('images/rccg_img.png')}}">
     <script src="https://cdn.tailwindcss.com"></script>
