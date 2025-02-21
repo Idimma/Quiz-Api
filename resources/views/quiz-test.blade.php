@@ -89,10 +89,12 @@
 @section('script')
     <script type="text/babel">
 			const setData = (key, value) => localStorage.setItem(key, JSON.stringify(value));
+
 			function getData(key, _default = null) {
 				const data = localStorage.getItem(key);
 				return data ? JSON.parse(data) : _default;
 			}
+
 			const removeData = key => localStorage.removeItem(key);
 
 			let QUESTIONS = {!! $questions !!};
@@ -400,14 +402,14 @@
 					const baseUrl = "{{ url('api/process-questions') }}";
 					// TODO save data
 					const params = {
-						questions: JSON.stringify(QUESTIONS.map(w => {
+						questions: QUESTIONS.map(w => {
 							delete w.audio;
 							delete w.type;
 							delete w.word;
 							delete w.level;
 							delete w.id;
 							return w
-						})),
+						}),
 						name: "{{ $student->name }}",
 						type: '{{$student->type}}',
 						level: '{{$student->level}}',

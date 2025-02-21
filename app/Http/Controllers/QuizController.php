@@ -131,12 +131,10 @@ class QuizController extends Controller
 
     public function processQuestions(Request $request)
     {
-        $questions = json_decode($request->questions, true) ?? [];
-
+        $questions = $request->get('questions', []);
 
         foreach ($questions as $index => $question) {
             $color = '';
-
             $score = 0;
             $question['ai_score'] = 0;
 
@@ -146,9 +144,9 @@ class QuizController extends Controller
                     $score = $question['mark'];
                     $color = '#008000';
                     $question['ai_score'] = 100;
-
                 }
             }
+
             if ($question['question_type'] === 'paragraph') {
                 $que = $question['question'];
                 $answer = $question['answer'];
@@ -241,8 +239,8 @@ class QuizController extends Controller
                 $player->save();
                 $player->refresh();
             }
-        }catch(\Exception $e){
-            logs()->error("AI ERROR ". $e->getMessage());
+        } catch (\Exception $e) {
+            logs()->error("AI ERROR " . $e->getMessage());
         }
 
 
