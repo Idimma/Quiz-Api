@@ -88,14 +88,8 @@
 @stop
 @section('script')
     <script type="text/babel">
-			const setData = (key, value) => localStorage.setItem(key, JSON.stringify(value));
 
-			function getData(key, _default = null) {
-				const data = localStorage.getItem(key);
-				return data ? JSON.parse(data) : _default;
-			}
 
-			const removeData = key => localStorage.removeItem(key);
 
 			let QUESTIONS = {!! $questions !!};
 			let STUDENT = {!! $student !!};
@@ -326,9 +320,7 @@
 								onAnswer('', index)
 								return 0;
 							}
-							const sec = prev - 1;
-							localStorage.setItem("seconds", `${sec}`);
-							return sec;
+							return prev - 1;
 						});
 					}, 1000);
 				};
@@ -342,57 +334,15 @@
 
 				const resetTimer = () => {
 					stopTimer();
-					localStorage.removeItem("seconds");
 					setSeconds(question ? question.timer : 0);
 				};
 
 
-				function onLoadSaveData() {
-// 					const _timer = question ? question.timer : 60;
-// 					const sec = Number(localStorage.getItem('seconds') || _timer);
-// 					const prog = Number(localStorage.getItem('progress') || PROGRESS);
-//
-// 					QUESTIONS = getData("QUESTIONS", QUESTIONS);
-// 					STUDENT = getData("STUDENT", STUDENT);
-//                      if (QUESTIONS) QUESTION_COUNT = QUESTIONS.length;
-//
-// 					if (prog > -1) {
-// 						startTimer(prog)
-// 						setSeconds(Number(sec));
-// 						setProgress(prog);
-// 						showLoading("Restoring session")
-// 						onLoadNextQuestion(prog - 1)
-// 						showFaded()
-// 						hideLoading()
-// 					}
-				}
-
-
-// 				useEffect(() => {
-// 					const handleBeforeUnload = (event) => {
-// 						setData("QUESTIONS", QUESTIONS);
-// 						setData("STUDENT", STUDENT);
-// 					};
-// 					onLoadSaveData()
-//
-// 					window.addEventListener("beforeunload", handleBeforeUnload);
-// 					return () => {
-// 						window.removeEventListener("beforeunload", handleBeforeUnload);
-// 						stopTimer()
-// 					};
-// 				}, []);
 
 
 				const showResult = () => {
 					showLoading("Opening results")
 					window.location.href = `{{url('result')}}/{{ $student->user_id }}`
-				}
-
-				function onResetData() {
-// 					removeData("QUESTIONS");
-// 					removeData("STUDENT");
-// 					removeData("seconds");
-// 					removeData("progress");
 				}
 
 				const stopQuestions = () => {
@@ -420,7 +370,6 @@
 						showLoading("Loading results")
 						hideLoading();
 						setRender('success')
-						onResetData()
 					}).catch(() => {
 						hideLoading();
 						setRender('retry')
@@ -431,8 +380,6 @@
 				function onLoadNextQuestion(start) {
 					const next = Number(start) + 1;
 					if (next < QUESTION_COUNT) {
-						localStorage.setItem('progress', `${next}`)
-						localStorage.setItem("seconds", seconds);
 						setProgress(next)
 						startQuiz(() => {
 							const question = QUESTIONS[next];
