@@ -197,7 +197,7 @@ class QuizController extends Controller
 
     public function processQuestionsAi(Request $request)
     {
-        $questions = json_decode($request->questions, true) ?? [];
+        $questions = $request->get('questions', []);
         $questions = AIService::calculateScores($questions);
         $usedTimer = array_map(fn($q) => $q['second_spent'] ?? $q['timer'] ?? 20, $questions);
         $marks = array_map(fn($q) => $q['mark'] ?? 0, $questions);
