@@ -171,11 +171,11 @@ class AIService
                 $color = '#FF0000';
                 try {
                     $s = $question['given_answer'];
-                }catch(\Exception $exception){
+                } catch (\Exception $exception) {
                     logs()->info("missing coloumn", $question);
                 }
 
-                if (str($question['expected_answer']??'')->lower()->trim()->toString() == str($question['given_answer']??'')->trim()->lower()->toString()) {
+                if (str($question['expected_answer'] ?? '')->lower()->trim()->toString() == str($question['given_answer'] ?? '')->trim()->lower()->toString()) {
                     $score = $question['mark'];
                     $color = AIService::getColor(100);
                     $question['ai_score'] = 100;
@@ -195,7 +195,6 @@ class AIService
         }
 
 
-
         return $questions;
     }
 
@@ -210,7 +209,7 @@ class AIService
 
 
                 $color = '#FF0000';
-                if (str($question['expected_answer']??'')->lower()->trim()->toString() == str($question['given_answer'] ??'')->trim()->lower()->toString()) {
+                if (str($question['expected_answer'] ?? '')->lower()->trim()->toString() == str($question['given_answer'] ?? '')->trim()->lower()->toString()) {
                     $score = $question['mark'];
                     $color = AIService::getColor(100);
                     $question['ai_score'] = 100;
@@ -257,5 +256,39 @@ class AIService
         return $questions;
     }
 
+    public static function getPositionDetails($position)
+    {
+        $colors = ['gold', 'silver', '#cd7f32', '']; // Gold, Silver, Bronze, Gray
+        $lors = ['#000000; font-family:  "Avenir Next Bold", fantasy; font-size: 18px',
+            '#000000 ; font-family:  "Avenir Next Medium", fantasy; font-size: 15px',
+            'white',
+            '#000000'
+        ]; // Gold, Silver, Bronze, Gray
+        $medals = ['🥇', '🥈', '🥉', ''];
+
+        // Assign color & medal (default to gray if beyond top 3)
+        $color = $colors[$position - 1] ?? '#f0f0f0';
+        $lor = $lors[$position - 1] ?? '';
+        $medal = $medals[$position - 1] ?? '';
+
+        // Determine ordinal suffix (st, nd, rd, th)
+        if ($position % 100 >= 11 && $position % 100 <= 13) {
+            $suffix = 'th';
+        } else {
+            $suffix = match ($position % 10) {
+                1 => 'st',
+                2 => 'nd',
+                3 => 'rd',
+                default => 'th',
+            };
+        }
+
+        return [
+            'background' => $color,
+            'color' => $lor,
+            'medal' => $medal,
+            'position_text' => "{$position}{$suffix}"
+        ];
+    }
 
 }

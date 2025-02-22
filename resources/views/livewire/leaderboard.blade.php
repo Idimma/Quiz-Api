@@ -12,21 +12,28 @@
                 <tr>
                     <th scope="col">#</th>
                     <th scope="col">Player</th>
-                    <th scope="col">Type</th>
                     <th scope="col">Score</th>
                     <th scope="col">Percent</th>
                     <th scope="col">Duration</th>
                     <th scope="col">Time</th>
                 </tr>
                 </thead>
-                <tbody >
+                <tbody>
+                @php
+
+                        @endphp
+
                 @foreach($players as $index => $player)
-                    <tr>
-                        <td>#{{ $index + 1 }}</td>
+                        <?php
+                        $details = \App\Services\AIService::getPositionDetails($index + 1); // Get position details
+                        ?>
+                    <tr style="background-color: {{ $details['background'] }};color: {{ $details['color'] }};">
+                        <td>
+                            <span><span style="font-size: 40px!important;"> {{ $details['medal'] }}</span> {{'  '}} {{ $details['position_text'] }}</span>
+                        </td>
                         <td>{{ $player->name }}</td>
-                        <td>{{ $player->question_type }}</td>
                         <td>{{ $player->score }}/{{ $player->mark }}</td>
-                        <td>{{ number_format($player->percent * 100, 0) }}%</td>
+                        <td>{{ number_format($player->percent * 100, 1) }}%</td>
                         <td>{{ $player->seconds_used }} Sec</td>
                         <td>{{ Carbon\Carbon::parse($player->created_at)->diffForHumans() }}</td>
                     </tr>

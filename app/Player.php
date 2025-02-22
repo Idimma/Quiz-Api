@@ -90,17 +90,17 @@ class Player extends Model
 
     public function getMarksAttribute()
     {
-        return array_map(fn($q) => $q['mark'], $this->questions ?? []);
+        return array_map(fn($q) => $q['mark']??0, $this->questions ?? []);
     }
 
     public function getScoresAttribute()
     {
-        return array_map(fn($q) => $q['score'], $this->questions ?? []);
+        return array_map(fn($q) => $q['score']??0, $this->questions ?? []);
     }
 
     public function getMarkAttribute()
     {
-        return array_sum(array_map(fn($q) => $q['mark'], $this->questions ?? []));
+        return array_sum(array_map(fn($q) => $q['mark']??0, $this->questions ?? []));
     }
 
 }

@@ -5,6 +5,7 @@ namespace App\Http\Livewire;
 use App\Player;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Faker\Factory as Faker;
 
 class Leaderboard extends Component
 {
@@ -25,7 +26,9 @@ class Leaderboard extends Component
 
     public function updateLeaderboard()
     {
-        $this->players = Player::orderBy('percent', 'desc')->get();
+        $this->players = Player::orderBy('percent', 'desc')
+            ->orderBy('seconds_used', 'asc')
+            ->get();
     }
 
     public function render()
