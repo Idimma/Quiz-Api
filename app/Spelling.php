@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Http;
 
 /**
  * App\Spelling
@@ -29,5 +30,25 @@ class Spelling extends Model
     protected $fillable = ['word', 'type', 'level', 'audio'];
     protected $hidden = ['created_at', 'updated_at', 'type', 'level',];
 
+    public function fixAudio()
+    {
+        $apiKey = env('GOOGLE_TTS_API_KEY');
+        $url = "https://texttospeech.googleapis.com/v1/text:synthesize?key={$apiKey}";
+        $word = $this->word;
+        $response = Http::post($url, [
+            'input' => ['text' => "Spell " . $word],
+            'voice' => [
+                'languageCode' => 'en-AU',
+                'name' => 'en-AU-Polyglot-1',
+                'ssmlGender' => 'MALE'
+            ],
+            'audioConfig' => ['audioEncoding' => 'MP3']
+        ]);
+        $data = $response->json();
+        $audio = '';
+        if (isset($data['audioContent'])) $audio = $data['audioContent'];
 
+        $this->audio = $audio;
+        $this->save();
+    }
 }

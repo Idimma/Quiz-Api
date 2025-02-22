@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('content')
-    <main class="max-w-[1200px] mx-auto pt-4">
+    <main class="max-w-[1200px] mx-auto pt-4 pb-[100px] mb-8">
         <div class="flex px-3 gap-8 justify-center flex-md-row-reverse overflow-hidden flex-col md:flex-row" >
             <!-- Left Side: List of Questions -->
             <div class="mb-4 mx-auto w-full md:w-5/12">

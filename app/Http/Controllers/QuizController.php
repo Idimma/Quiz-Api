@@ -9,6 +9,7 @@ use App\Services\AIService;
 use App\Spelling;
 use App\Student;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class QuizController extends Controller
 {
@@ -262,8 +263,24 @@ class QuizController extends Controller
 
     function storeSpelling(Request $request)
     {
-        $data = $request->only(['word', 'type', 'level']);
-        Spelling::updateOrCreate($data, $data);
+        $spelling = $request->only(['word', 'type', 'level']);
+
+        $apiKey = env('GOOGLE_TTS_API_KEY');
+        $url = "https://texttospeech.googleapis.com/v1/text:synthesize?key={$apiKey}";
+        $word = $spelling['word'];
+        $response = Http::post($url, [
+            'input' => ['text' => "Spell " . $word],
+            'voice' => [
+                'languageCode' => 'en-AU',
+                'name' => 'en-AU-Polyglot-1',
+                'ssmlGender' => 'MALE'
+            ],
+            'audioConfig' => ['audioEncoding' => 'MP3']
+        ]);
+        $data = $response->json();
+        if (isset($data['audioContent'])) $spelling['audio'] = $data['audioContent'];
+        Spelling::updateOrCreate($spelling, $spelling);
+
         return redirect("spellings");
     }
 
