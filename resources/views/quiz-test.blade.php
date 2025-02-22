@@ -82,7 +82,7 @@
     </style>
 @stop
 @section('content')
-    <div class="mobile-content py-[22px] no-scrollbar">
+    <div class="mobile-content  no-scrollbar">
         <div class="flex-1 flex flex-col" id="question-panel"></div>
     </div>
 @stop
