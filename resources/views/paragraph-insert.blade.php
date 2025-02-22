@@ -6,7 +6,7 @@
                 <div class="card-header bg-primary text-white">
                     <h5 class="mb-0 text-white">{{ isset($question) ? 'Edit Paragraph Question' : 'Create Paragraph Question' }}</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body pb-[40px]">
                     @if ($errors->any())
                         <div style="font-size: 12px" class="alert text-white alert-danger">
                             <ul class="mb-0">
@@ -68,7 +68,7 @@
             </div>
         </div>
 
-        <div class="mb-4 mx-auto md:w-7/12">
+        <div class="mb-4 pb-[100px] mx-auto md:w-7/12">
             <div class="card shadow-sm rounded overflow-hidden">
                 <div class="card-header bg-primary text-white">
                     <h5 class="mb-0 text-white">Questions</h5>

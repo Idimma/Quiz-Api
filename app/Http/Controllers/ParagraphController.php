@@ -23,6 +23,8 @@ class ParagraphController extends Controller
             'level' => 'nullable|string',
             'type' => 'nullable|string',
             'meta' => 'nullable|string',
+            'student_instruction' => 'nullable|string',
+            'ai_instruction' => 'nullable|string',
         ]);
         $validated['type'] = "bible";
         $validated['level'] = "level 1";
@@ -58,6 +60,8 @@ class ParagraphController extends Controller
             'level' => 'nullable|string',
             'type' => 'nullable|string',
             'meta' => 'nullable|string',
+            'student_instruction' => 'nullable|string',
+            'ai_instruction' => 'nullable|string',
         ]);
         if ($request->has('bible_ref')) {
             $meta = is_array($blankParagraph->meta) ? $blankParagraph->meta : [];
