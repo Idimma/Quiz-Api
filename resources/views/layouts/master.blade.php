@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="author" content="Gidicodes">
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=contain">
+    <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; viewport-fit=contain;">
     <link rel="shortcut icon" href="{{asset('images/rccg_img.png')}}">
     <script src="https://cdn.tailwindcss.com"></script>
     <title>Quiz Portal</title>
