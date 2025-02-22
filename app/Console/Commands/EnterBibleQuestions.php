@@ -45,7 +45,6 @@ class EnterBibleQuestions extends Command
             $level++;
         }
 
-        dd($newFormat);
         return Command::SUCCESS;
     }
 }
