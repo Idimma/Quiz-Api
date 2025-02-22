@@ -37,9 +37,16 @@
                         <td>{{ $player->seconds_used }} Sec</td>
                         <td>{{ Carbon\Carbon::parse($player->created_at)->diffForHumans() }}</td>
                     </tr>
+
                 @endforeach
                 </tbody>
             </table>
+            @if(!count($players))
+                <div class="centered text-center h-[500px]">
+                    <h1 class="text-2xl">Waiting....</h1>
+                </div>
+            @endif
+
             <div wire:poll.5s="updateLeaderboard"></div>
         </div>
     </div>
