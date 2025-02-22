@@ -6,9 +6,6 @@
                 <span>Home</span>
             </a>
         </div>
-        <div wire:poll.750ms>
-            Latest update time: {{ now() }}
-        </div>
         <div class="table-responsive">
             <table class="table mb-0 radius-5">
                 <thead class="bg-primary text-white radius-5">
