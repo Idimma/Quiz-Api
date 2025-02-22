@@ -9,6 +9,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <title>Quiz Portal</title>
     @yield('js')
+    @livewireScripts
+
     <link href="{{asset('css/index.css')}}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="{{asset('css/style.css')}}" type="text/css">
@@ -96,6 +98,7 @@
 	}
 </script>
 @yield('script')
+
 </body>
 </html>
 
