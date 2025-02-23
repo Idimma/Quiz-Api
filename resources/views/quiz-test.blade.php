@@ -461,10 +461,8 @@
 
 						<div hidden={progress > -1}
 						     className="flex inset-0 gap-[20px] absolute bg-white bg-opacity-50 rounded-lg justify-center items-center flex-col">
-							<h1 className="text-[24px] ">Are you ready?</h1>
-							<button onClick={() => onLoadNextQuestion(+progress)} className="btn-primary btn text-white btn-round ">
-								YES, I AM READY !!!
-							</button>
+							<h1 className="text-[24px] ">Quiz has been closed</h1>
+
 						</div>
 
 					</div>
