@@ -90,385 +90,391 @@
     <script type="text/babel">
 
 
+      let QUESTIONS = {!! $questions !!};
+      let STUDENT = {!! $student !!};
 
-			let QUESTIONS = {!! $questions !!};
-			let STUDENT = {!! $student !!};
+      let QUESTION_COUNT = QUESTIONS.length
+      let score = 0;
+      let PROGRESS = -1;
 
-			let QUESTION_COUNT = QUESTIONS.length
-			let score = 0;
-			let PROGRESS = -1;
+      const { useState, useEffect, useRef, forwardRef } = React
 
-			const {useState, useEffect, useRef, forwardRef} = React
+      const Selector = ({ label, onClick, isSelected, option = 'a' }) => {
+        return (
+          <div
+            className={`selector-options fade-in ${isSelected ? "selected" : ""}`}
+            onClick={onClick}
+            onKeyDown={(e) => {
+              if (e.key === option) {
+                onClick();
+              }
+            }}
+            role="button"
+            tabIndex={0}
+            aria-pressed={isSelected}
+          >
+            {/* Checked and Unchecked SVGs */}
+            {isSelected ? (
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            ) : (
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <circle cx="12" cy="12" r="10"></circle>
+              </svg>
+            )}
+            <span>{label}</span>
+          </div>
+        );
+      };
 
-			const Selector = ({label, onClick, isSelected, option = 'a'}) => {
-				return (
-					<div
-						className={`selector-options fade-in ${isSelected ? "selected" : ""}`}
-						onClick={onClick}
-						onKeyDown={(e) => {
-							if (e.key === option) {
-								onClick();
-							}
-						}}
-						role="button"
-						tabIndex={0}
-						aria-pressed={isSelected}
-					>
-						{/* Checked and Unchecked SVGs */}
-						{isSelected ? (
-							<svg
-								width="20"
-								height="20"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								strokeWidth="2"
-								strokeLinecap="round"
-								strokeLinejoin="round"
-							>
-								<polyline points="20 6 9 17 4 12"></polyline>
-							</svg>
-						) : (
-							<svg
-								width="20"
-								height="20"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								strokeWidth="2"
-								strokeLinecap="round"
-								strokeLinejoin="round"
-							>
-								<circle cx="12" cy="12" r="10"></circle>
-							</svg>
-						)}
-						<span>{label}</span>
-					</div>
-				);
-			};
+      const CircularProgress = ({ size = 120, progress = 0, strokeWidth = 7 }) => {
+        const radius = ( size - strokeWidth ) / 2; // Adjust for stroke width
+        const circumference = 2 * Math.PI * radius;
+        const offset = circumference - ( progress / QUESTION_COUNT ) * circumference;
+        return (
+          <div className="z-10 relative">
+            <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+              <circle
+                cx={size / 2}
+                cy={size / 2}
+                r={radius}
+                fill="none"
+                stroke="#C3EFFF"
+                strokeWidth={strokeWidth}
+              />
+              <circle
+                cx={size / 2}
+                cy={size / 2}
+                r={radius}
+                fill="none"
+                stroke="#F6904C"
+                strokeWidth={strokeWidth}
+                strokeDasharray={circumference}
+                strokeDashoffset={offset}
+                strokeLinecap="round"
+                transform={`rotate(-90 ${size / 2} ${size / 2})`}
+              />
+              <text
+                x="50%"
+                y="50%"
+                fontWeight="600"
+                dominantBaseline="middle"
+                textAnchor="middle"
+                fontSize="36px"
+                fill="#F6904C"
+              >
+                {progress}
+              </text>
+            </svg>
 
-			const CircularProgress = ({size = 120, progress = 0, strokeWidth = 7}) => {
-				const radius = (size - strokeWidth) / 2; // Adjust for stroke width
-				const circumference = 2 * Math.PI * radius;
-				const offset = circumference - (progress / QUESTION_COUNT) * circumference;
-				return (
-					<div className="z-10 relative">
-						<svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-							<circle
-								cx={size / 2}
-								cy={size / 2}
-								r={radius}
-								fill="none"
-								stroke="#C3EFFF"
-								strokeWidth={strokeWidth}
-							/>
-							<circle
-								cx={size / 2}
-								cy={size / 2}
-								r={radius}
-								fill="none"
-								stroke="#F6904C"
-								strokeWidth={strokeWidth}
-								strokeDasharray={circumference}
-								strokeDashoffset={offset}
-								strokeLinecap="round"
-								transform={`rotate(-90 ${size / 2} ${size / 2})`}
-							/>
-							<text
-								x="50%"
-								y="50%"
-								fontWeight="600"
-								dominantBaseline="middle"
-								textAnchor="middle"
-								fontSize="36px"
-								fill="#F6904C"
-							>
-								{progress}
-							</text>
-						</svg>
+          </div>
+        );
+      };
 
-					</div>
-				);
-			};
+      const MultipleChoice = ({ progress, question, onDone }) => {
+        const [answer, setAnswer] = React.useState('');
+        useEffect(() => {
+          showFaded()
+        }, []);
+        return (
+          <div className="flex-1 overflow-y-scroll no-scrollbar">
+            <div className="relative">
+              <CircularProgress size={85} progress={progress + 1}/>
+              <div className="question-view fade-in">
+                <p>{question.question}</p>
+              </div>
+            </div>
+            <div className="flex flex-col py-[20px] gap-[20px]">
+              {['a', 'b', 'c', 'd'].map((opt) => <Selector
+                key={opt} label={question[opt]} option={opt}
+                isSelected={answer === opt}
+                onClick={() => {
+                  setAnswer(opt);
+                  onDone(question[opt])
+                  setTimeout(() => {
+                    setAnswer('')
+                  }, 500)
+                }}/>)}
+            </div>
+          </div>
+        )
+      }
 
-			const MultipleChoice = ({progress, question, onDone}) => {
-				const [answer, setAnswer] = React.useState('');
-				useEffect(() => {
-					showFaded()
-				}, []);
-				return (
-					<div className="flex-1 overflow-y-scroll no-scrollbar">
-						<div className="relative">
-							<CircularProgress size={85} progress={progress + 1}/>
-							<div className="question-view fade-in">
-								<p>{question.question}</p>
-							</div>
-						</div>
-						<div className="flex flex-col py-[20px] gap-[20px]">
-							{['a', 'b', 'c', 'd'].map((opt) => <Selector
-								key={opt} label={question[opt]} option={opt}
-								isSelected={answer === opt}
-								onClick={() => {
-									setAnswer(opt);
-									onDone(question[opt])
-									setTimeout(() => {
-										setAnswer('')
-									}, 500)
-								}}/>)}
-						</div>
-					</div>
-				)
-			}
+      const Paragraph = ({ progress, onDone, question }) => {
+        const [answer, setAnswer] = React.useState('');
+        return (
+          <div className="gap-[20px] relative">
+            <div className="relative">
+              <CircularProgress size={85} progress={progress + 1}/>
+              <div className="question-view">
+                <div className="flex-1">
+                  <p className="font-medium text-[16px] text-center">{question.question}</p>
+                </div>
+                <article>{question.student_instruction}</article>
+              </div>
+            </div>
+            <textarea
+              value={answer}
+              className="paragraph-view"
+              onChange={(e) => setAnswer(e.target.value)}
+              placeholder="Enter your answer here"
+            ></textarea>
+            <div className="flex py-4 items-center justify-center">
+              <button className="btn btn-primary btn-round " onClick={() => {
+                onDone(answer)
+                setTimeout(() => setAnswer(''), 400)
+              }}>SUBMIT
+              </button>
+            </div>
 
-			const Paragraph = ({progress, onDone, question}) => {
-				const [answer, setAnswer] = React.useState('');
-				return (
-					<div className="gap-[20px] relative">
-						<div className="relative">
-							<CircularProgress size={85} progress={progress + 1}/>
-							<div className="question-view">
-								<div className="flex-1">
-									<p className="font-medium text-[16px] text-center">{question.question}</p>
-								</div>
-								<article>{question.student_instruction}</article>
-							</div>
-						</div>
-						<textarea
-							value={answer}
-							className="paragraph-view"
-							onChange={(e) => setAnswer(e.target.value)}
-							placeholder="Enter your answer here"
-						></textarea>
-						<div className="flex py-4 items-center justify-center">
-							<button className="btn btn-primary btn-round " onClick={() => {
-								onDone(answer)
-								setTimeout(() => setAnswer(''), 400)
-							}}>SUBMIT
-							</button>
-						</div>
+          </div>
+        )
+      }
 
-					</div>
-				)
-			}
+      const Spelling = ({ progress, audio, onDone, onStartTimer }) => {
+        const [answer, setAnswer] = React.useState('');
 
-			const Spelling = ({progress, audio, onDone, onStartTimer}) => {
-				const [answer, setAnswer] = React.useState('');
-
-				const sayWord = () => {
-					new Audio(`data:audio/mp3;base64,${audio}`).play();
-					onStartTimer();
-				};
-
-
-				return (
-					<div className="flex-1 flex flex-col gap-[20px]">
-						<div className="relative">
-							<CircularProgress size={85} progress={progress + 1}/>
-							<div className="question-view">
-								<button className="border-0 mx-auto btn-transparent" onClick={sayWord}>
-									<img src="{{asset('images/speaker.svg')}}" alt="speaker" className="speaker-btn"/>
-								</button>
-							</div>
-						</div>
-						<div className="flex items-center mt-[50px] gap-[15px]">
-							<div className="flex-1">
-								<input
-									autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck="false"
-									placeholder="Enter word you hear"
-									className="spelling-input form-control  ml-auto mr-auto text-uppercase "
-									value={answer}
-									onChange={(e) => setAnswer(String(e.target.value).toUpperCase().toString())}
-								/>
-							</div>
-
-							<button disabled={!answer} className="btn-primary btn text-white btn-round " onClick={() => {
-								onDone(answer)
-								setTimeout(() => {
-									setAnswer('')
-								}, 400)
-							}}>
-								SUBMIT
-							</button>
-						</div>
-					</div>
-				)
-			}
-
-			function App() {
-				const [question, setQuestion] = useState(null)
-				const [type, setType] = useState('')
-				const [render, setRender] = useState('')
-				const [progress, setProgress] = React.useState(PROGRESS);
-				const [seconds, setSeconds] = useState(60);
-				const intervalRef = useRef(null);
+        const sayWord = () => {
+          new Audio(`data:audio/mp3;base64,${audio}`).play();
+          onStartTimer();
+        };
 
 
-				const formatTime = (totalSeconds) => {
-					const hrs = Math.floor(totalSeconds / 3600);
-					const mins = Math.floor((totalSeconds % 3600) / 60);
-					const secs = totalSeconds % 60;
-					return [hrs, mins, secs]
-					.map((val) => String(val).padStart(2, "0"))
-					.join(":");
-				};
+        return (
+          <div className="flex-1 flex flex-col gap-[20px]">
+            <div className="relative">
+              <CircularProgress size={85} progress={progress + 1}/>
+              <div className="question-view">
+                <button className="border-0 mx-auto btn-transparent" onClick={sayWord}>
+                  <img src="{{asset('images/speaker.svg')}}" alt="speaker" className="speaker-btn"/>
+                </button>
+              </div>
+            </div>
+            <div className="flex items-center mt-[50px] gap-[15px]">
+              <div className="flex-1">
+                <input
+                  autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck="false"
+                  placeholder="Enter word you hear"
+                  className="spelling-input form-control  ml-auto mr-auto text-uppercase "
+                  value={answer}
+                  onChange={(e) => setAnswer(String(e.target.value).toUpperCase().toString())}
+                />
+              </div>
 
-				const startTimer = (index = null) => {
-					if (intervalRef.current) return; // Prevent multiple intervals
-					intervalRef.current = setInterval(() => {
-						setSeconds((prev) => {
-							if (prev <= 1) {
-								onAnswer('', index)
-								return 0;
-							}
-							return prev - 1;
-						});
-					}, 1000);
-				};
+              <button disabled={!answer} className="btn-primary btn text-white btn-round " onClick={() => {
+                onDone(answer)
+                setTimeout(() => {
+                  setAnswer('')
+                }, 400)
+              }}>
+                SUBMIT
+              </button>
+            </div>
+          </div>
+        )
+      }
 
-				const stopTimer = () => {
-					if (intervalRef && intervalRef.current) {
-						clearInterval(intervalRef.current);
-						intervalRef.current = null;
-					}
-				};
-
-				const resetTimer = () => {
-					stopTimer();
-					setSeconds(question ? question.timer : 0);
-				};
-
-
-
-
-				const showResult = () => {
-					showLoading("Opening results")
-					window.location.href = `{{url('result')}}/{{ $student->user_id }}`
-				}
-
-				const stopQuestions = () => {
-					setType('')
-					setQuestion(null)
-					showLoading("Calculating scores")
-					const baseUrl = "{{ url('api/process-questions') }}";
-					// TODO save data
-					const params = {
-						questions: QUESTIONS.map(w => {
-							delete w.audio;
-							delete w.type;
-							delete w.word;
-							delete w.level;
-							delete w.id;
-							return w
-						}),
-						name: "{{ $student->name }}",
-						type: '{{$student->type}}',
-						level: '{{$student->level}}',
-						user_id: "{{ $student->user_id }}",
-						question_type: 'mixed',
-					}
-					axios.post(baseUrl, params).then(({data}) => {
-						showLoading("Loading results")
-						hideLoading();
-						setRender('success')
-					}).catch(() => {
-						hideLoading();
-						setRender('retry')
-					})
-				};
+      function App () {
+        const [question, setQuestion] = useState(null)
+        const [type, setType] = useState('')
+        const [render, setRender] = useState('')
+        const [progress, setProgress] = React.useState(PROGRESS);
+        const [seconds, setSeconds] = useState(60);
+        const intervalRef = useRef(null);
 
 
-				function onLoadNextQuestion(start) {
-					const next = Number(start) + 1;
-					if (next < QUESTION_COUNT) {
-						setProgress(next)
-						startQuiz(() => {
-							const question = QUESTIONS[next];
-							setQuestion(question)
-							setSeconds(question.timer)
-							const type = String(question.question_type);
-							setType(question.question_type)
-							if (type.includes('multiple') || type.includes('paragraph')) {
-								startTimer(next)
-							}
-						}, 800)
-						return
-					}
-					stopQuestions()
-				}
+        const formatTime = (totalSeconds) => {
+          const hrs = Math.floor(totalSeconds / 3600);
+          const mins = Math.floor(( totalSeconds % 3600 ) / 60);
+          const secs = totalSeconds % 60;
+          return [hrs, mins, secs]
+            .map((val) => String(val).padStart(2, "0"))
+            .join(":");
+        };
 
-				const onAnswer = (ans, index = null) => {
-					resetTimer()
-					const currentIndex = index != null ? index : progress;
-					const q = QUESTIONS[currentIndex];
-					if (q) {
-						q.given_answer = ans
-						q.second_spent = q.timer - seconds
-						QUESTIONS[currentIndex] = q;
-					}
-					onLoadNextQuestion(currentIndex)
-				}
+        const startTimer = (index = null) => {
+          if (intervalRef.current) return; // Prevent multiple intervals
+          intervalRef.current = setInterval(() => {
+            setSeconds((prev) => {
+              if (prev <= 1) {
+                onAnswer('', index)
+                return 0;
+              }
+              return prev - 1;
+            });
+          }, 1000);
+        };
 
-				if (render === 'success') {
-					return (
-						<div className="flex-1 flex flex-col centered relative">
-							<div className="mb-[80px] centered px-5 flex-col ">
-								<img src="{{asset("/images/success.png")}}" alt="Completed"/>
-								<p className="text-black font-medium text-[16px] text-center">Thank you for taking the test, you can now
-									view your result</p>
-							</div>
-							<button type="button" onClick={showResult} className="btn btn-round btn-primary">
-								View Results
-							</button>
-						</div>
-					)
-				}
+        const stopTimer = () => {
+          if (intervalRef && intervalRef.current) {
+            clearInterval(intervalRef.current);
+            intervalRef.current = null;
+          }
+        };
 
-				if (render === 'retry') {
-					return (
-						<div className="flex-1 flex flex-col centered relative">
-							<div className="mb-[80px] centered px-5 flex-col ">
-								<img src="{{asset("/images/error.png")}}" width="180px" alt="Completed"/>
-								<p className="text-black font-medium text-[16px] mt-3 text-center">
-									Could not process your request, please try again later
-								</p>
-							</div>
-							<button type="button" onClick={stopQuestions} className="btn btn-round btn-primary">
-								Retry
-							</button>
-						</div>
-					)
-				}
-				return (
-					<div className="flex-1 flex flex-col relative">
-						<div className="flex justify-between mt-[10px] mb-[20px]">
-							<div className={`time-counter text-center`}>
-								<span>{progress + 1}/{QUESTION_COUNT}</span>
-							</div>
+        const resetTimer = () => {
+          stopTimer();
+          setSeconds(question ? question.timer : 0);
+        };
 
-							<div className={`time-counter ${seconds < 6 ? "blink" : ""}`}>
-								<span>{formatTime(seconds)}</span>
-							</div>
-						</div>
-						{type.includes('multiple') &&
-							<MultipleChoice question={question ? question : {}} progress={progress}
-							                onDone={(a) => onAnswer(a, progress)}/>}
-						{type.includes('paragraph') &&
-							<Paragraph question={question ? question : {}} progress={progress}
-							           onDone={(a) => onAnswer(a, progress)}/>}
-						{type.includes('spelling') &&
-							<Spelling audio={question ? question.audio : ''} onStartTimer={startTimer} progress={progress}
-							          onDone={(a) => onAnswer(a, progress)}/>}
 
-						<div hidden={progress > -1}
-						     className="flex inset-0 gap-[20px] absolute bg-white bg-opacity-50 rounded-lg justify-center items-center flex-col">
-							<h1 className="text-[24px] ">Quiz has been closed</h1>
+        const showResult = () => {
+          showLoading("Opening results")
+          window.location.href = `{{url('result')}}/{{ $student->user_id }}`
+        }
 
-						</div>
+        const stopQuestions = () => {
+          setType('')
+          setQuestion(null)
+          showLoading("Calculating scores")
+          const baseUrl = "{{ url('api/process-questions') }}";
+          // TODO save data
+          const params = {
+            questions: QUESTIONS.map(w => {
+              delete w.audio;
+              delete w.type;
+              delete w.word;
+              delete w.level;
+              delete w.id;
+              return w
+            }),
+            name: "{{ $student->name }}",
+            type: '{{$student->type}}',
+            level: '{{$student->level}}',
+            user_id: "{{ $student->user_id }}",
+            question_type: 'mixed',
+          }
+          axios.post(baseUrl, params).then(({ data }) => {
+            showLoading("Loading results")
+            hideLoading();
+            setRender('success')
+          }).catch(() => {
+            hideLoading();
+            setRender('retry')
+          })
+        };
 
-					</div>
-				);
-			}
 
-			ReactDOM.createRoot(document.getElementById("question-panel")).render(<App/>);
+        function onLoadNextQuestion (start) {
+          const next = Number(start) + 1;
+          if (next < QUESTION_COUNT) {
+            setProgress(next)
+            startQuiz(() => {
+              const question = QUESTIONS[next];
+              setQuestion(question)
+              setSeconds(question.timer)
+              const type = String(question.question_type);
+              setType(question.question_type)
+              if (type.includes('multiple') || type.includes('paragraph')) {
+                startTimer(next)
+              }
+            }, 800)
+            return
+          }
+          stopQuestions()
+        }
+
+        const onAnswer = (ans, index = null) => {
+          resetTimer()
+          const currentIndex = index != null ? index : progress;
+          const q = QUESTIONS[currentIndex];
+          if (q) {
+            q.given_answer = ans
+            q.second_spent = q.timer - seconds
+            QUESTIONS[currentIndex] = q;
+          }
+          onLoadNextQuestion(currentIndex)
+        }
+
+        if (render === 'success') {
+          return (
+            <div className="flex-1 flex flex-col centered relative">
+              <div className="mb-[80px] centered px-5 flex-col ">
+                <img src="{{asset("/images/success.png")}}" alt="Completed"/>
+                <p className="text-black font-medium text-[16px] text-center">Thank you for taking the test, you can now
+                  view your result</p>
+              </div>
+              <button type="button" onClick={showResult} className="btn btn-round btn-primary">
+                View Results
+              </button>
+            </div>
+          )
+        }
+
+        if (render === 'retry') {
+          return (
+            <div className="flex-1 flex flex-col centered relative">
+              <div className="mb-[80px] centered px-5 flex-col ">
+                <img src="{{asset("/images/error.png")}}" width="180px" alt="Completed"/>
+                <p className="text-black font-medium text-[16px] mt-3 text-center">
+                  Could not process your request, please try again later
+                </p>
+              </div>
+              <button type="button" onClick={stopQuestions} className="btn btn-round btn-primary">
+                Retry
+              </button>
+            </div>
+          )
+        }
+        return (
+          <div className="flex-1 flex flex-col relative">
+            <div className="flex justify-between mt-[10px] mb-[20px]">
+              <div className={`time-counter text-center`}>
+                <span>{progress + 1}/{QUESTION_COUNT}</span>
+              </div>
+
+              <div className={`time-counter ${seconds < 6 ? "blink" : ""}`}>
+                <span>{formatTime(seconds)}</span>
+              </div>
+            </div>
+            {type.includes('multiple') &&
+             <MultipleChoice question={question ? question : {}} progress={progress}
+                             onDone={(a) => onAnswer(a, progress)}/>}
+            {type.includes('paragraph') &&
+             <Paragraph question={question ? question : {}} progress={progress}
+                        onDone={(a) => onAnswer(a, progress)}/>}
+            {type.includes('spelling') &&
+             <Spelling audio={question ? question.audio : ''} onStartTimer={startTimer} progress={progress}
+                       onDone={(a) => onAnswer(a, progress)}/>}
+
+            <div hidden={progress > -1}
+                 className="flex inset-0 gap-[20px] absolute bg-white bg-opacity-50 rounded-lg justify-center items-center flex-col">
+
+                @if(env('CLOSE_QUIZ', false))
+                <h1 className="text-[24px] ">Quiz has been closed</h1>
+                @else
+                <h1 className="text-[24px] ">Are you ready?</h1>
+              <button onClick={() => onLoadNextQuestion(+progress)} className="btn-primary btn text-white btn-round ">
+                YES, I AM READY !!!
+              </button>
+                @endif
+
+
+            </div>
+
+          </div>
+        );
+      }
+
+      ReactDOM.createRoot(document.getElementById("question-panel")).render(<App/>);
     </script>
 @stop

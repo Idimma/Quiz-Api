@@ -8,47 +8,45 @@
 
         <div class="instructions-container px-4">
             <h3 class="bold">Instructions:</h3>
-            <p>
-                Please read these instructions carefully before starting the quiz.
-            </p>
+            <p>Please read these instructions carefully before starting the quiz.</p>
 
             <h4>Quiz Structure</h4>
             <ul>
-                <li>The quiz consists of 25 questions.</li>
+                <li>The quiz consists of 20 questions.</li>
                 <li>Questions are divided into three sections:
                     <ul>
-                        <li><strong>Multiple-choice questions (20):</strong> Each carries 3 marks.</li>
-                        <li><strong>Spelling questions (2):</strong> Each carries 5 marks.</li>
-                        <li><strong>Knowledge-based questions (3):</strong> Each carries 10 marks. These require written
-                            answers and will be graded by the Sunday School AI.
-                        </li>
+                        <li><strong>Multiple-choice questions (20):</strong> Each carries 5 marks.</li>
+{{--                        <li><strong>Spelling questions (2):</strong> Each carries 5 marks.</li>--}}
+{{--                        <li><strong>Knowledge-based questions (3):</strong> Each carries 10 marks. These require written--}}
+{{--                            answers and will be graded by the Sunday School AI.--}}
+{{--                        </li>--}}
                     </ul>
                 </li>
             </ul>
 
             <h4>Answering Rules</h4>
             <ul>
-                <li>Each multiple-choice question is timed, and you have <strong>15 seconds</strong> to answer.</li>
+                <li>Each multiple-choice question is timed, and you have <strong>20 seconds</strong> to answer.</li>
                 <li>Once you select an answer, it will be marked immediately, and the system will move to the next
                     question.
                 </li>
                 <li>The timer starts automatically when the quiz loads, so stay focused.</li>
             </ul>
 
-            <h4>Spelling Questions</h4>
-            <ul>
-                <li>Each spelling question has a "SAY WORD" button—click it to hear the word.</li>
-                <li>Spelling questions are not timed until you click "SAY WORD," so ensure your speakers are at a high
-                    volume.
-                </li>
-                <li>Type your answer carefully before submitting.</li>
-            </ul>
+{{--            <h4>Spelling Questions</h4>--}}
+{{--            <ul>--}}
+{{--                <li>Each spelling question has a "SAY WORD" button—click it to hear the word.</li>--}}
+{{--                <li>Spelling questions are not timed until you click "SAY WORD," so ensure your speakers are at a high--}}
+{{--                    volume.--}}
+{{--                </li>--}}
+{{--                <li>Type your answer carefully before submitting.</li>--}}
+{{--            </ul>--}}
 
-            <h4>Knowledge-Based Questions</h4>
-            <ul>
-                <li>These require written responses. Type your answers clearly and concisely in the input field.</li>
-                <li>Answers will be graded by the Sunday School AI based on accuracy and clarity.</li>
-            </ul>
+{{--            <h4>Knowledge-Based Questions</h4>--}}
+{{--            <ul>--}}
+{{--                <li>These require written responses. Type your answers clearly and concisely in the input field.</li>--}}
+{{--                <li>Answers will be graded by the Sunday School AI based on accuracy and clarity.</li>--}}
+{{--            </ul>--}}
 
             <h4>General Guidelines</h4>
             <ul>

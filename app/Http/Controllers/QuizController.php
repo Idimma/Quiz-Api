@@ -48,7 +48,7 @@ class QuizController extends Controller
         $phone = session()->get('phone', $phone);
         $user = Student::whereUserId($phone)->first();
         if ($user) {
-            return view('dashboard', [
+            return view('instructions', [
                 'name' => $user->name,
                 'user_id' => $user->user_id,
                 'level' => $user->level,
@@ -56,7 +56,7 @@ class QuizController extends Controller
                 'type' => $user->type,
             ]);
         }
-        return redirect('/', ['error' => 'Student not registered']);
+        return redirect('/')->with(['error' => 'Student not registered']);
     }
 
 
@@ -86,34 +86,34 @@ class QuizController extends Controller
     {
         $multipleChoice = Question::whereType('bible')->inRandomOrder()->take(20)->get()
             ->map(function ($q) {
-                $answer = $q->answer;
+                $answer = strtolower($q->answer);
                 return array_merge($q->toArray(), [
                     'question_type' => 'multiple_choice',
                     'expected_answer' => $q->$answer,
-                    'timer' => 20,
-                    'mark' => 3
+                    'timer' => 25,
+                    'mark' => 5
                 ]);
             });
+//
+//        $spellings = Spelling::whereType('bible')->inRandomOrder()->take(2)->get()
+//            ->map(fn($q) => array_merge($q->toArray(), [
+//                'question_type' => 'spelling',
+//                'timer' => 25,
+//                'answer' => $q->word,
+//                'expected_answer' => $q->word,
+//                'question' => "Spell " . $q->word,
+//                'mark' => 5
+//            ]));
+//
+//        $paragraphs = BlankParagraph::whereType('bible')->inRandomOrder()->take(3)->get()
+//            ->map(fn($q) => array_merge($q->toArray(), [
+//                'question_type' => 'paragraph',
+//                'expected_answer' => $q->answer,
+//                'timer' => 60,
+//                'mark' => 10
+//            ]));
 
-        $spellings = Spelling::whereType('bible')->inRandomOrder()->take(2)->get()
-            ->map(fn($q) => array_merge($q->toArray(), [
-                'question_type' => 'spelling',
-                'timer' => 25,
-                'answer' => $q->word,
-                'expected_answer' => $q->word,
-                'question' => "Spell " . $q->word,
-                'mark' => 5
-            ]));
-
-        $paragraphs = BlankParagraph::whereType('bible')->inRandomOrder()->take(3)->get()
-            ->map(fn($q) => array_merge($q->toArray(), [
-                'question_type' => 'paragraph',
-                'expected_answer' => $q->answer,
-                'timer' => 60,
-                'mark' => 10
-            ]));
-
-        $questions = collect($multipleChoice)->merge($spellings)->merge($paragraphs);
+        $questions = $multipleChoice; // collect($multipleChoice)->merge($spellings)->merge($paragraphs);
         return view('quiz-test', compact('questions', 'student'));
     }
 
@@ -294,8 +294,7 @@ class QuizController extends Controller
     public function result(Request $request, $userId)
     {
         $player = Player::whereUserId($userId)->latest()->firstOrFail();
-
-        if (!$player->ai_marked) {
+        if (true || !$player->ai_marked) {
             $player->questions = AIService::recalculate($player->questions);
             $questions = $player->questions;
             $usedTimer = array_map(fn($q) => $q['second_spent'] ?? $q['timer'] ?? 20, $questions);
